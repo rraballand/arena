@@ -6,6 +6,7 @@ export type Outcome = 'A' | 'B' | 'D'
 export interface MatchTeam {
   name: string
   playerIds: number[]
+  slots?: number
 }
 export interface Match {
   id: number
@@ -236,7 +237,16 @@ function makeParallelMatches(
   const active = pool.filter(p => !p.archived).map(p => p.id)
   const perMatch = teamSize * 2
   const matchCount = Math.floor(active.length / perMatch)
-  if (matchCount === 0) return { matches: [] as Array<{ teamA: number[]; teamB: number[] }>, benched: active }
+  if (matchCount === 0) {
+    // Not enough for a full match. Create one partial match if we have >= 2 players.
+    if (active.length < 2) return { matches: [] as Array<{ teamA: number[]; teamB: number[] }>, benched: active }
+    const shuffled = [...active].sort(() => Math.random() - 0.5)
+    const half = Math.floor(shuffled.length / 2)
+    return {
+      matches: [{ teamA: shuffled.slice(0, half), teamB: shuffled.slice(half, half * 2) }],
+      benched: shuffled.slice(half * 2),
+    }
+  }
   const scoreOf = (id: number) => scores.get(id)?.points ?? 0
 
   let bestPlan: {
@@ -290,7 +300,31 @@ function makeParallelMatches(
     }
     if (totalDiff === 0) break
   }
-  return bestPlan ?? { matches: [], benched: active }
+  const finalPlan = bestPlan ?? { matches: [], benched: active }
+  // If some players remain on the bench and >=2, split them into a partial extra match
+  if (finalPlan.benched.length >= 2) {
+    const shuffledBench = [...finalPlan.benched].sort(() => Math.random() - 0.5)
+    const half = Math.floor(shuffledBench.length / 2)
+    finalPlan.matches = [
+      ...finalPlan.matches,
+      { teamA: shuffledBench.slice(0, half), teamB: shuffledBench.slice(half, half * 2) },
+    ]
+    finalPlan.benched = shuffledBench.slice(half * 2)
+  }
+  // If exactly one player remains on the bench, drop them into the smallest team of an
+  // existing match so nobody sits out.
+  if (finalPlan.benched.length === 1 && finalPlan.matches.length) {
+    const lone = finalPlan.benched[0]
+    let target: { team: number[]; size: number } | null = null
+    for (const m of finalPlan.matches) {
+      for (const team of [m.teamA, m.teamB]) {
+        if (!target || team.length < target.size) target = { team, size: team.length }
+      }
+    }
+    target?.team.push(lone)
+    finalPlan.benched = []
+  }
+  return finalPlan
 }
 
 export function createBatch(game: 'lol' | 'val', teamSize: number) {
@@ -301,8 +335,8 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
   const pool = players.filter(p =>
     !p.archived && (game === 'lol' ? p.lol.playing : p.valorant.playing),
   )
-  if (pool.length < teamSize * 2) {
-    throw new Error(`Roster insuffisant (${pool.length}/${teamSize * 2})`)
+  if (pool.length < 2) {
+    throw new Error(`Roster insuffisant (${pool.length}/2)`)
   }
   const scores = computeScores(matches, game)
   const existing = new Set(matches.filter(m => m.game === game).map(m => pairKey(m.teamA.playerIds, m.teamB.playerIds)))
@@ -322,8 +356,8 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
       createdAt: now,
       batchId,
       benched: plan.benched,
-      teamA: { name: nameA, playerIds: teamA },
-      teamB: { name: nameB, playerIds: teamB },
+      teamA: { name: nameA, playerIds: teamA, slots: teamSize },
+      teamB: { name: nameB, playerIds: teamB, slots: teamSize },
       outcome: null,
     }
   })
@@ -348,6 +382,93 @@ export function deleteBatch(batchId: string) {
   const store = useMatchesStore()
   store.value = store.value.filter(m => m.batchId !== batchId)
 }
+
+/**
+ * Randomize an opponent from the roster (excluding bench) and create a match against the bench.
+ * If the bench has fewer players than the default team size, both teams shrink accordingly
+ * (or use `size` to force a specific N vs N).
+ */
+export function challengeBenchWithRandom(batchId: string, size?: number) {
+  const store = useMatchesStore()
+  const players = usePlayersStore().value
+  const batchMatches = store.value.filter(m => m.batchId === batchId)
+  if (!batchMatches.length) throw new Error('Session introuvable')
+
+  const bench = batchMatches[0].benched ?? []
+  const game = batchMatches[0].game
+  const defaultSize = batchMatches[0].teamA.slots ?? batchMatches[0].teamA.playerIds.length
+  if (bench.length < 2) throw new Error(`Banc trop petit pour un match (${bench.length}/2)`)
+
+  const shuffled = [...bench].sort(() => Math.random() - 0.5)
+  const half = Math.floor(shuffled.length / 2)
+  const benchTeamCount = Math.min(half, defaultSize)
+  const teamSize = size ?? defaultSize
+
+  const benchTeam = shuffled.slice(0, benchTeamCount)
+  const opponentTeam = shuffled.slice(benchTeamCount, benchTeamCount * 2)
+  const usedIds = new Set([...benchTeam, ...opponentTeam])
+  const remainingBench = bench.filter(id => !usedIds.has(id))
+
+  const usedNames = new Set(store.value.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
+  const nameA = randomTeamName(game, usedNames)
+  usedNames.add(nameA)
+  const nameB = randomTeamName(game, usedNames)
+
+  const nextId = store.value.length ? Math.max(...store.value.map(m => m.id)) + 1 : 1
+  const newMatch: Match = {
+    id: nextId,
+    game,
+    createdAt: new Date().toISOString(),
+    batchId,
+    benched: remainingBench,
+    teamA: { name: nameA, playerIds: benchTeam, slots: teamSize },
+    teamB: { name: nameB, playerIds: opponentTeam, slots: teamSize },
+    outcome: null,
+  }
+
+  store.value = store.value.map(m =>
+    m.batchId === batchId ? { ...m, benched: remainingBench } : m,
+  ).concat(newMatch)
+}
+
+/**
+ * Create an additional match inside an existing batch, pitting the bench against an
+ * existing team of that batch. Removes the used bench players from all matches of the batch.
+ */
+export function challengeFromBench(batchId: string, opponentPlayerIds: number[], opponentName: string) {
+  const store = useMatchesStore()
+  const batchMatches = store.value.filter(m => m.batchId === batchId)
+  if (!batchMatches.length) throw new Error('Session introuvable')
+
+  const bench = batchMatches[0].benched ?? []
+  const game = batchMatches[0].game
+  const teamSize = opponentPlayerIds.length
+  if (bench.length < teamSize) throw new Error(`Banc insuffisant (${bench.length}/${teamSize})`)
+
+  const shuffled = [...bench].sort(() => Math.random() - 0.5)
+  const benchTeam = shuffled.slice(0, teamSize)
+  const remainingBench = shuffled.slice(teamSize)
+
+  const usedNames = new Set(store.value.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
+  const benchName = randomTeamName(game, usedNames)
+
+  const nextId = store.value.length ? Math.max(...store.value.map(m => m.id)) + 1 : 1
+  const newMatch: Match = {
+    id: nextId,
+    game,
+    createdAt: new Date().toISOString(),
+    batchId,
+    benched: remainingBench,
+    teamA: { name: benchName, playerIds: benchTeam },
+    teamB: { name: opponentName, playerIds: [...opponentPlayerIds] },
+    outcome: null,
+  }
+
+  store.value = store.value.map(m =>
+    m.batchId === batchId ? { ...m, benched: remainingBench } : m,
+  ).concat(newMatch)
+}
+
 
 export function purgeMatches(game?: 'lol' | 'val') {
   const store = useMatchesStore()

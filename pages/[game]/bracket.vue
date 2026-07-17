@@ -6,6 +6,7 @@ import {
   createBatch,
   setMatchOutcome as storeSetOutcome,
   deleteBatch as storeDeleteBatch,
+  challengeBenchWithRandom,
   purgeMatches,
 } from '~/composables/useStores'
 import { useCurrentGame } from '~/composables/useCurrentGame'
@@ -24,6 +25,9 @@ const playersStore = usePlayersStore()
 const matchesStore = useMatchesStore()
 
 const players = computed(() => playersStore.value)
+const activePlayers = computed(() =>
+  players.value.filter(p => (game.value === 'lol' ? p.lol.playing : p.valorant.playing)),
+)
 const matches = computed(() =>
   [...matchesStore.value]
     .filter(m => m.game === game.value)
@@ -92,6 +96,14 @@ function setOutcome(m: Match, outcome: Outcome) {
   storeSetOutcome(m.id, outcome)
 }
 
+function benchChallenge(batch: Batch) {
+  try {
+    challengeBenchWithRandom(batch.batchId)
+  } catch (e: any) {
+    alert(e?.message || 'Erreur')
+  }
+}
+
 const titles = {
   lol: { title: "Faille de l'Invocateur", subtitle: 'League of Legends' },
   val: { title: 'Protocole Radiant', subtitle: 'Valorant' },
@@ -105,8 +117,8 @@ const titles = {
         :game="game"
         :title="titles[game].title"
         :subtitle="titles[game].subtitle"
-        :count="matches.length"
-        :total="matches.length"
+        :count="activePlayers.length"
+        :total="players.length"
       />
     </div>
 
@@ -150,7 +162,7 @@ const titles = {
     </div>
 
     <div v-if="!batches.length" class="hex-frame p-8 md:p-12 text-center text-lol-grey-1">
-      Aucun match. Clique <strong class="text-lol-gold-2">Nouveau match</strong> pour tirer 2 équipes équilibrées.
+      Aucun match. Clique <strong class="text-lol-gold-2">+</strong> pour créer des équipes équilibrées.
     </div>
 
     <div v-else class="space-y-12">
@@ -203,6 +215,14 @@ const titles = {
                 <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6 rounded-lg" />
                 <span class="truncate">{{ playerById(pid)?.pseudo || `#${pid}` }}</span>
               </li>
+              <li
+                v-for="n in Math.max(0, (m.teamA.slots ?? m.teamA.playerIds.length) - m.teamA.playerIds.length)"
+                :key="`a-empty-${n}`"
+                class="flex items-center gap-2 text-sm text-lol-grey-2 italic"
+              >
+                <div class="w-6 h-6 border border-dashed border-lol-gold-6/40 rounded-lg" />
+                <span>Slot vide</span>
+              </li>
             </ul>
           </div>
 
@@ -229,6 +249,14 @@ const titles = {
               <li v-for="pid in m.teamB.playerIds" :key="`b-${pid}`" class="flex items-center gap-2 text-sm text-lol-gold-1">
                 <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6 rounded-lg" />
                 <span class="truncate">{{ playerById(pid)?.pseudo || `#${pid}` }}</span>
+              </li>
+              <li
+                v-for="n in Math.max(0, (m.teamB.slots ?? m.teamB.playerIds.length) - m.teamB.playerIds.length)"
+                :key="`b-empty-${n}`"
+                class="flex items-center gap-2 text-sm text-lol-grey-2 italic"
+              >
+                <div class="w-6 h-6 border border-dashed border-lol-gold-6/40 rounded-lg" />
+                <span>Slot vide</span>
               </li>
             </ul>
           </div>
@@ -266,8 +294,16 @@ const titles = {
         </div>
 
         <div v-if="batch.benched.length" class="mt-4 border border-dashed border-lol-gold-6/40 p-3">
-          <div class="text-[10px] uppercase tracking-widest text-lol-grey-1 mb-2">
-            Sur le banc ({{ batch.benched.length }})
+          <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+            <div class="text-[10px] uppercase tracking-widest text-lol-grey-1">
+              Sur le banc ({{ batch.benched.length }})
+            </div>
+            <button
+              v-if="batch.matches.length && batch.benched.length >= 2"
+              class="px-3 py-1.5 text-[10px] uppercase tracking-widest border border-lol-gold-6 hover:border-lol-gold-3 text-lol-gold-2 transition"
+              title="Split le banc en 2 teams et lance un match"
+              @click="benchChallenge(batch)"
+            >⚔ Faire jouer le banc</button>
           </div>
           <div class="flex flex-wrap gap-2">
             <div
