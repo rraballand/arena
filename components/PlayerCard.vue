@@ -77,7 +77,7 @@ function toggleShadow() {
 
     <div class="flex items-center gap-3">
       <div
-        class="w-10 h-10 shrink-0 overflow-hidden border"
+        class="w-10 h-10 shrink-0 overflow-hidden rounded-lg border"
         :class="game === 'val' ? 'border-val-red/60' : 'border-lol-gold-4'"
       >
         <img :src="avatarUrl" :alt="player.pseudo" class="w-full h-full" />

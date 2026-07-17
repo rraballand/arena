@@ -96,17 +96,17 @@ async function submit() {
             v-model="search"
             type="text"
             placeholder="Tape ton nom ou username GitLab..."
-            class="w-full bg-lol-void border border-lol-gold-6 focus:border-lol-gold-3 outline-none px-3 md:px-4 py-3 text-lol-gold-1"
+            class="w-full bg-lol-void border border-lol-gold-6 rounded-lg focus:border-lol-gold-3 outline-none px-3 md:px-4 py-3 text-lol-gold-1"
           />
           <div v-if="search.trim().length >= 2" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 md:max-h-96 overflow-y-auto">
             <button
               v-for="m in filtered"
               :key="m.id"
               type="button"
-              class="flex items-center gap-3 p-2 border border-lol-gold-6 hover:border-lol-gold-3 hover:bg-lol-gold-6/20 transition text-left"
+              class="flex items-center gap-3 p-2 border border-lol-gold-6 rounded-lg hover:border-lol-gold-3 hover:bg-lol-gold-6/20 transition text-left"
               @click="pick(m)"
             >
-              <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-10 h-10 border border-lol-gold-6 shrink-0" />
+              <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-10 h-10 border border-lol-gold-6 rounded-lg shrink-0" />
               <div class="min-w-0 flex-1">
                 <div class="font-display font-semibold text-lol-gold-1 truncate text-sm md:text-base">{{ m.name }}</div>
               </div>

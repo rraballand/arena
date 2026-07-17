@@ -59,7 +59,7 @@ function pick(m: FactoryMember) {
         v-model="search"
         type="text"
         placeholder="Tape le nom d'un joueur à inscrire..."
-        class="flex-1 bg-lol-void border border-lol-gold-6 focus:border-lol-gold-3 outline-none px-3 py-2 text-lol-gold-1"
+        class="flex-1 bg-lol-void border border-lol-gold-6 rounded-lg focus:border-lol-gold-3 outline-none px-3 py-2 text-lol-gold-1"
       />
     </div>
     <div v-if="candidates.length" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -67,10 +67,10 @@ function pick(m: FactoryMember) {
         v-for="m in candidates"
         :key="m.id"
         type="button"
-        class="flex items-center gap-3 p-2 border border-lol-gold-6 hover:border-lol-gold-3 hover:bg-lol-gold-6/20 transition text-left"
+        class="flex items-center gap-3 p-2 border border-lol-gold-6 rounded-lg hover:border-lol-gold-3 hover:bg-lol-gold-6/20 transition text-left"
         @click="pick(m)"
       >
-        <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-8 h-8 border border-lol-gold-6 shrink-0" />
+        <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-8 h-8 border border-lol-gold-6 rounded-lg shrink-0" />
         <div class="min-w-0 flex-1">
           <div class="font-display font-semibold text-lol-gold-1 truncate text-sm">{{ m.name }}</div>
         </div>

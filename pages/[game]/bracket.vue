@@ -115,7 +115,7 @@ const titles = {
     <div v-reveal="60" class="mt-8 hex-frame p-4 md:p-6 mb-6 md:mb-10 flex flex-col md:flex-row md:items-center gap-4 justify-between">
       <div class="flex items-center gap-3">
         <label class="text-[10px] uppercase tracking-widest text-lol-grey-1">Taille équipe</label>
-        <input v-model.number="teamSize" type="number" min="1" max="6" class="w-16 bg-lol-void border border-lol-gold-6 focus:border-lol-gold-3 outline-none px-2 py-2 text-lol-gold-1 text-sm text-center" />
+        <input v-model.number="teamSize" type="number" min="1" max="6" class="w-16 bg-lol-void border border-lol-gold-6 rounded-lg focus:border-lol-gold-3 outline-none px-2 py-2 text-lol-gold-1 text-sm text-center" />
         <span class="text-xs uppercase tracking-widest text-lol-grey-2">v{{ teamSize }}</span>
       </div>
       <div class="flex flex-wrap items-center gap-3">
@@ -154,14 +154,14 @@ const titles = {
     </div>
 
     <div v-else class="space-y-12">
-      <fieldset
+      <section
         v-for="batch in batches"
         :key="batch.batchId"
-        class="hex-frame p-4 md:p-6 relative"
+        class="hex-frame relative pt-8 md:pt-9 p-4 md:p-6"
       >
-        <legend class="px-2 flex items-center gap-2 bg-lol-void">
-          <span class="text-[10px] uppercase tracking-widest text-lol-gold-2">
-            {{ new Date(batch.createdAt).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) }}
+        <div class="absolute -top-3 left-4 flex items-center gap-2 bg-lol-void px-3 py-1 border border-lol-gold-4/60">
+          <span class="text-[10px] uppercase tracking-[0.3em] text-lol-gold-2 font-display">
+            {{ new Date(batch.createdAt).toLocaleString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}
           </span>
           <button
             class="text-lol-grey-2 hover:text-lol-red transition"
@@ -173,10 +173,10 @@ const titles = {
               <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
             </svg>
           </button>
-        </legend>
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-      <div v-for="m in batch.matches" :key="m.id" class="border border-lol-gold-6/60 p-3 md:p-4 bg-lol-void/30">
+      <div v-for="m in batch.matches" :key="m.id" class="border border-lol-gold-6/60 rounded-lg p-3 md:p-4 bg-lol-void/30">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Team A -->
@@ -188,17 +188,19 @@ const titles = {
                 ? 'border-lol-gold-6 opacity-60'
                 : 'border-lol-gold-6'"
           >
-            <div class="flex items-center justify-between mb-3">
+            <div class="mb-3">
+              <div class="text-[10px] uppercase tracking-[0.3em] mb-1 h-4">
+                <span v-if="m.outcome === 'A'" class="text-lol-gold-2">Vainqueur</span>
+                <span v-else-if="m.outcome === 'B'" class="text-lol-grey-2">Défaite</span>
+                <span v-else-if="m.outcome === 'D'" class="text-lol-blue-2">Match nul</span>
+              </div>
               <div class="font-display text-lg md:text-xl font-bold" :class="game === 'val' ? 'text-val-cream' : 'text-lol-gold-1'">
                 {{ m.teamA.name }}
               </div>
-              <div v-if="m.outcome === 'A'" class="text-[10px] uppercase tracking-widest text-lol-gold-2">🏆 Vainqueur</div>
-              <div v-else-if="m.outcome === 'B'" class="text-[10px] uppercase tracking-widest text-lol-grey-1">Défaite</div>
-              <div v-else-if="m.outcome === 'D'" class="text-[10px] uppercase tracking-widest text-lol-blue-2">Match nul</div>
             </div>
             <ul class="space-y-1">
               <li v-for="pid in m.teamA.playerIds" :key="`a-${pid}`" class="flex items-center gap-2 text-sm text-lol-gold-1">
-                <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6" />
+                <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6 rounded-lg" />
                 <span class="truncate">{{ playerById(pid)?.pseudo || `#${pid}` }}</span>
               </li>
             </ul>
@@ -213,46 +215,52 @@ const titles = {
                 ? 'border-lol-gold-6 opacity-60'
                 : 'border-lol-gold-6'"
           >
-            <div class="flex items-center justify-between mb-3">
+            <div class="mb-3">
+              <div class="text-[10px] uppercase tracking-[0.3em] mb-1 h-4">
+                <span v-if="m.outcome === 'B'" class="text-lol-gold-2">Vainqueur</span>
+                <span v-else-if="m.outcome === 'A'" class="text-lol-grey-2">Défaite</span>
+                <span v-else-if="m.outcome === 'D'" class="text-lol-blue-2">Match nul</span>
+              </div>
               <div class="font-display text-lg md:text-xl font-bold" :class="game === 'val' ? 'text-val-cream' : 'text-lol-gold-1'">
                 {{ m.teamB.name }}
               </div>
-              <div v-if="m.outcome === 'B'" class="text-[10px] uppercase tracking-widest text-lol-gold-2">🏆 Vainqueur</div>
-              <div v-else-if="m.outcome === 'A'" class="text-[10px] uppercase tracking-widest text-lol-grey-1">Défaite</div>
-              <div v-else-if="m.outcome === 'D'" class="text-[10px] uppercase tracking-widest text-lol-blue-2">Match nul</div>
             </div>
             <ul class="space-y-1">
               <li v-for="pid in m.teamB.playerIds" :key="`b-${pid}`" class="flex items-center gap-2 text-sm text-lol-gold-1">
-                <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6" />
+                <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6 rounded-lg" />
                 <span class="truncate">{{ playerById(pid)?.pseudo || `#${pid}` }}</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-lol-gold-6/40 flex flex-wrap items-center gap-2">
-          <div class="text-[10px] uppercase tracking-widest text-lol-grey-1 mr-2">Résultat :</div>
-          <button
-            class="px-3 py-1.5 border text-xs uppercase tracking-widest transition"
-            :class="m.outcome === 'A'
-              ? 'border-lol-gold-2 text-lol-gold-1 bg-lol-gold-6/40'
-              : 'border-lol-gold-6 text-lol-grey-1 hover:border-lol-gold-4'"
-            @click="setOutcome(m, 'A')"
-          >{{ m.teamA.name }} gagne</button>
-          <button
-            class="px-3 py-1.5 border text-xs uppercase tracking-widest transition"
-            :class="m.outcome === 'D'
-              ? 'border-lol-blue-2 text-lol-blue-2 bg-lol-blue-6/40'
-              : 'border-lol-gold-6 text-lol-grey-1 hover:border-lol-blue-2'"
-            @click="setOutcome(m, 'D')"
-          >Match nul</button>
-          <button
-            class="px-3 py-1.5 border text-xs uppercase tracking-widest transition"
-            :class="m.outcome === 'B'
-              ? 'border-lol-gold-2 text-lol-gold-1 bg-lol-gold-6/40'
-              : 'border-lol-gold-6 text-lol-grey-1 hover:border-lol-gold-4'"
-            @click="setOutcome(m, 'B')"
-          >{{ m.teamB.name }} gagne</button>
+        <div class="mt-5 pt-4 border-t border-lol-gold-6/40">
+          <div class="grid grid-cols-[1fr_auto_1fr] items-center border border-lol-gold-6 rounded-lg/60 divide-x divide-lol-gold-6/60">
+            <button
+              class="px-3 py-3 text-xs uppercase tracking-[0.2em] transition truncate text-center"
+              :class="m.outcome === 'A'
+                ? 'text-lol-gold-1 bg-lol-gold-6/30'
+                : 'text-lol-grey-1 hover:text-lol-gold-1 hover:bg-lol-gold-6/10'"
+              @click="setOutcome(m, 'A')"
+            >{{ m.teamA.name }}</button>
+            <button
+              class="px-4 py-3 text-[10px] uppercase tracking-[0.3em] font-display transition"
+              :class="m.outcome === 'D'
+                ? 'text-lol-blue-2 bg-lol-blue-2/10'
+                : 'text-lol-grey-2 hover:text-lol-blue-2'"
+              @click="setOutcome(m, 'D')"
+            >Nul</button>
+            <button
+              class="px-3 py-3 text-xs uppercase tracking-[0.2em] transition truncate text-center"
+              :class="m.outcome === 'B'
+                ? 'text-lol-gold-1 bg-lol-gold-6/30'
+                : 'text-lol-grey-1 hover:text-lol-gold-1 hover:bg-lol-gold-6/10'"
+              @click="setOutcome(m, 'B')"
+            >{{ m.teamB.name }}</button>
+          </div>
+          <div class="text-center mt-2 text-[9px] uppercase tracking-[0.3em] text-lol-grey-2">
+            Clique pour désigner le vainqueur
+          </div>
         </div>
       </div>
         </div>
@@ -265,14 +273,14 @@ const titles = {
             <div
               v-for="pid in batch.benched"
               :key="`bench-${batch.batchId}-${pid}`"
-              class="flex items-center gap-2 px-2 py-1 border border-lol-gold-6 text-xs text-lol-grey-1"
+              class="flex items-center gap-2 px-2 py-1 border border-lol-gold-6 rounded-lg text-xs text-lol-grey-1"
             >
-              <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-5 h-5 border border-lol-gold-6" />
+              <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-5 h-5 border border-lol-gold-6 rounded-lg" />
               {{ playerById(pid)?.pseudo || `#${pid}` }}
             </div>
           </div>
         </div>
-      </fieldset>
+      </section>
     </div>
   </div>
 </template>

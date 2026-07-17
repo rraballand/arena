@@ -85,7 +85,7 @@ async function submit() {
         <h2 class="text-[10px] md:text-xs uppercase tracking-widest text-val-red mb-3 md:mb-4">Identité Factory</h2>
 
         <div v-if="selectedMember" class="hex-frame p-4 flex items-center gap-4">
-          <img v-if="selectedMember.avatar_url" :src="selectedMember.avatar_url" :alt="selectedMember.name" class="w-14 h-14 md:w-16 md:h-16 border border-val-red/60 shrink-0" />
+          <img v-if="selectedMember.avatar_url" :src="selectedMember.avatar_url" :alt="selectedMember.name" class="w-14 h-14 md:w-16 md:h-16 border border-val-red/60 rounded-lg shrink-0" />
           <div class="flex-1 min-w-0">
             <div class="font-display text-lg md:text-2xl text-val-cream truncate">{{ selectedMember.name }}</div>
           </div>
@@ -96,17 +96,17 @@ async function submit() {
             v-model="search"
             type="text"
             placeholder="Tape ton nom ou username GitLab..."
-            class="w-full bg-lol-void border border-val-red/40 focus:border-val-red outline-none px-3 md:px-4 py-3 text-val-cream"
+            class="w-full bg-lol-void border border-val-red/40 rounded-lg focus:border-val-red outline-none px-3 md:px-4 py-3 text-val-cream"
           />
           <div v-if="search.trim().length >= 2" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 md:max-h-96 overflow-y-auto">
             <button
               v-for="m in filtered"
               :key="m.id"
               type="button"
-              class="flex items-center gap-3 p-2 border border-val-red/40 hover:border-val-red hover:bg-val-red/10 transition text-left"
+              class="flex items-center gap-3 p-2 border border-val-red/40 rounded-lg hover:border-val-red hover:bg-val-red/10 transition text-left"
               @click="pick(m)"
             >
-              <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-10 h-10 border border-val-red/40 shrink-0" />
+              <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-10 h-10 border border-val-red/40 rounded-lg shrink-0" />
               <div class="min-w-0 flex-1">
                 <div class="font-display font-semibold text-val-cream truncate text-sm md:text-base">{{ m.name }}</div>
               </div>

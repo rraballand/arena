@@ -132,7 +132,7 @@ function medal(index: number) {
           {{ String(i + 1).padStart(2, '0') }}
         </div>
         <div class="flex items-center gap-2 md:gap-3 min-w-0">
-          <img v-if="e.factoryAvatar" :src="e.factoryAvatar" :alt="e.pseudo" class="w-8 h-8 md:w-10 md:h-10 border border-lol-gold-6 transition" />
+          <img v-if="e.factoryAvatar" :src="e.factoryAvatar" :alt="e.pseudo" class="w-8 h-8 md:w-10 md:h-10 border border-lol-gold-6 rounded-lg transition" />
           <div class="min-w-0">
             <div class="font-display font-semibold text-lol-gold-1 truncate text-sm md:text-base">{{ e.pseudo }}</div>
           </div>

@@ -82,7 +82,7 @@ const titles = {
           @click="crossRegister(p.id)"
         >
           <div
-            class="w-10 h-10 shrink-0 overflow-hidden border opacity-60 group-hover:opacity-100"
+            class="w-10 h-10 shrink-0 overflow-hidden rounded-lg border opacity-60 group-hover:opacity-100"
             :class="game === 'val' ? 'border-val-red/60' : 'border-lol-gold-4'"
           >
             <img
