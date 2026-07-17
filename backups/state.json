@@ -1,0 +1,254 @@
+{
+  "players": [
+    {
+      "id": 1,
+      "pseudo": "RABALLAND Romain",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "rraballand",
+      "factoryUsername": "rraballand",
+      "factoryName": "RABALLAND Romain",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/285/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 2,
+      "pseudo": "FOSSES Benjamin",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "bfosses",
+      "factoryUsername": "bfosses",
+      "factoryName": "FOSSES Benjamin",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/249/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 3,
+      "pseudo": "BERNOUX Etienne",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "ebernoux",
+      "factoryUsername": "ebernoux",
+      "factoryName": "BERNOUX Etienne",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/163/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 4,
+      "pseudo": "SOUMPHOLPHAKDY Sisavang",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "ssoumpholphakdy",
+      "factoryUsername": "ssoumpholphakdy",
+      "factoryName": "SOUMPHOLPHAKDY Sisavang",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/135/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 5,
+      "pseudo": "Jean-Christophe Trebalag",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "jctrebalag",
+      "factoryUsername": "jctrebalag",
+      "factoryName": "Jean-Christophe Trebalag",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/133/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 6,
+      "pseudo": "PATTE Tanguy",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "tpatte",
+      "factoryUsername": "tpatte",
+      "factoryName": "PATTE Tanguy",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/182/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 7,
+      "pseudo": "Victor Nea",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "vnea",
+      "factoryUsername": "vnea",
+      "factoryName": "Victor Nea",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/580/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 8,
+      "pseudo": "GABELLEC Geoffroy",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "ggabellec",
+      "factoryUsername": "ggabellec",
+      "factoryName": "GABELLEC Geoffroy",
+      "factoryAvatar": "https://secure.gravatar.com/avatar/7aa69a6e63a75202289e586f27b2c819cae1c30850803c14b763847a161b14dc?s=80&d=identicon",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 9,
+      "pseudo": "SOULARD Maxime",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "msoulard",
+      "factoryUsername": "msoulard",
+      "factoryName": "SOULARD Maxime",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/398/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 10,
+      "pseudo": "DE ROEF Damien",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "dderoef",
+      "factoryUsername": "dderoef",
+      "factoryName": "DE ROEF Damien",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/395/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    },
+    {
+      "id": 11,
+      "pseudo": "MACHENAUD Gary",
+      "tagline": "EUW",
+      "region": "EUW",
+      "avatarSeed": "gmachenaud",
+      "factoryUsername": "gmachenaud",
+      "factoryName": "MACHENAUD Gary",
+      "factoryAvatar": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/134/avatar.png",
+      "registeredAt": "2026-07-17",
+      "lol": {
+        "playing": true
+      },
+      "valorant": {
+        "playing": true
+      }
+    }
+  ],
+  "matches": [
+    {
+      "id": 1,
+      "game": "lol",
+      "createdAt": "2026-07-17T20:01:28.145Z",
+      "batchId": "lol-1784318488145",
+      "benched": [
+        3
+      ],
+      "teamA": {
+        "name": "Les Ombres Fulgurants",
+        "playerIds": [
+          1,
+          4,
+          9,
+          7,
+          10
+        ]
+      },
+      "teamB": {
+        "name": "Les Rôdeurs Éternels",
+        "playerIds": [
+          6,
+          2,
+          8,
+          5,
+          11
+        ]
+      },
+      "outcome": null
+    },
+    {
+      "id": 2,
+      "game": "val",
+      "createdAt": "2026-07-17T20:02:16.310Z",
+      "batchId": "val-1784318536310",
+      "benched": [
+        8
+      ],
+      "teamA": {
+        "name": "Les Corbeaux Nocturnes",
+        "playerIds": [
+          2,
+          11,
+          4,
+          9,
+          3
+        ]
+      },
+      "teamB": {
+        "name": "Les Rebelles Cinglants",
+        "playerIds": [
+          7,
+          10,
+          6,
+          5,
+          1
+        ]
+      },
+      "outcome": null
+    }
+  ],
+  "exportedAt": "2026-07-17T20:19:57.105Z"
+}
