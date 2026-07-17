@@ -190,36 +190,6 @@
   ],
   "matches": [
     {
-      "id": 1,
-      "game": "lol",
-      "createdAt": "2026-07-17T20:01:28.145Z",
-      "batchId": "lol-1784318488145",
-      "benched": [
-        3
-      ],
-      "teamA": {
-        "name": "Les Ombres Fulgurants",
-        "playerIds": [
-          1,
-          4,
-          9,
-          7,
-          10
-        ]
-      },
-      "teamB": {
-        "name": "Les Rôdeurs Éternels",
-        "playerIds": [
-          6,
-          2,
-          8,
-          5,
-          11
-        ]
-      },
-      "outcome": null
-    },
-    {
       "id": 2,
       "game": "val",
       "createdAt": "2026-07-17T20:02:16.310Z",
@@ -250,5 +220,5 @@
       "outcome": null
     }
   ],
-  "exportedAt": "2026-07-17T20:19:57.105Z"
+  "exportedAt": "2026-07-17T20:20:39.317Z"
 }
