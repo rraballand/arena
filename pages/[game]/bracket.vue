@@ -5,7 +5,7 @@ import {
   useMatchesStore,
   createBatch,
   setMatchOutcome as storeSetOutcome,
-  deleteMatch as storeDeleteMatch,
+  deleteBatch as storeDeleteBatch,
   purgeMatches,
 } from '~/composables/useStores'
 import { useCurrentGame } from '~/composables/useCurrentGame'
@@ -78,9 +78,9 @@ function newMatch() {
   }
 }
 
-function deleteMatch(id: number) {
-  if (!confirm('Supprimer ce match ? Points recalculés.')) return
-  storeDeleteMatch(id)
+function deleteBatch(batchId: string) {
+  if (!confirm('Supprimer cette session et ses matches ? Points recalculés.')) return
+  storeDeleteBatch(batchId)
 }
 
 function purgeAll() {
@@ -130,10 +130,18 @@ const titles = {
         </button>
         <button
           v-if="matches.length"
-          class="lol-btn !px-4 text-lg leading-none"
-          title="Tout purger"
+          class="lol-btn !px-4"
+          title="Purger toutes les sessions"
           @click="purgeAll"
-        >↺</button>
+        >
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -146,28 +154,29 @@ const titles = {
     </div>
 
     <div v-else class="space-y-12">
-      <section
+      <fieldset
         v-for="batch in batches"
         :key="batch.batchId"
-        class="hex-frame p-4 md:p-6"
+        class="hex-frame p-4 md:p-6 relative"
       >
-        <div class="flex items-baseline gap-3 mb-6">
-          <div class="text-[10px] uppercase tracking-[0.4em] text-lol-blue-2">Session</div>
-          <div class="ornament flex-1" />
-          <div class="text-[10px] uppercase tracking-widest text-lol-grey-2">
+        <legend class="px-2 flex items-center gap-2 bg-lol-void">
+          <span class="text-[10px] uppercase tracking-widest text-lol-gold-2">
             {{ new Date(batch.createdAt).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) }}
-            · {{ batch.matches.length }} match{{ batch.matches.length > 1 ? 's' : '' }}
-          </div>
-        </div>
+          </span>
+          <button
+            class="text-lol-grey-2 hover:text-lol-red transition"
+            title="Supprimer cette session"
+            @click="deleteBatch(batch.batchId)"
+          >
+            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            </svg>
+          </button>
+        </legend>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
       <div v-for="m in batch.matches" :key="m.id" class="border border-lol-gold-6/60 p-3 md:p-4 bg-lol-void/30">
-        <div class="flex items-start justify-between mb-4 gap-3">
-          <div>
-            <div class="text-[10px] uppercase tracking-widest text-lol-grey-1">Match #{{ m.id }}</div>
-          </div>
-          <button class="text-lol-grey-2 hover:text-lol-red text-xs" @click="deleteMatch(m.id)">✕</button>
-        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Team A -->
@@ -263,7 +272,7 @@ const titles = {
             </div>
           </div>
         </div>
-      </section>
+      </fieldset>
     </div>
   </div>
 </template>

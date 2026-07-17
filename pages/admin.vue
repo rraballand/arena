@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { usePlayersStore, useMatchesStore } from '~/composables/useStores'
 import { useCurrentGame } from '~/composables/useCurrentGame'
+import {
+  useGitHubToken,
+  pushToGitHub,
+  pullFromGitHub,
+} from '~/composables/useGitHubSync'
 
 const currentGame = useCurrentGame()
 currentGame.value = null
@@ -44,6 +49,39 @@ function resetAll() {
   matchesStore.value = []
   message.value = 'Tout effacé.'
 }
+
+// --- GitHub sync ---
+const token = useGitHubToken()
+const showToken = ref(false)
+const syncMsg = ref<string | null>(null)
+const syncLoading = ref(false)
+
+async function push() {
+  syncLoading.value = true
+  syncMsg.value = null
+  try {
+    await pushToGitHub()
+    syncMsg.value = 'Push GitHub OK.'
+  } catch (e: any) {
+    syncMsg.value = `Erreur push : ${e.message}`
+  } finally {
+    syncLoading.value = false
+  }
+}
+
+async function pull() {
+  if (!confirm("Écraser l'état local avec la version distante ?")) return
+  syncLoading.value = true
+  syncMsg.value = null
+  try {
+    await pullFromGitHub()
+    syncMsg.value = 'Pull GitHub OK.'
+  } catch (e: any) {
+    syncMsg.value = `Erreur pull : ${e.message}`
+  } finally {
+    syncLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -52,7 +90,8 @@ function resetAll() {
       <div class="text-[10px] uppercase tracking-[0.5em] text-lol-blue-2 mb-3">Administration</div>
       <h1 class="lol-title text-4xl md:text-6xl font-black">Backup</h1>
       <p class="mt-3 text-lol-grey-1 text-sm">
-        Données stockées dans ton navigateur. Exporte pour sauvegarder, importe pour restaurer.
+        Données stockées dans ton navigateur. Exporte pour sauvegarder, importe pour restaurer,
+        ou sync avec GitHub.
       </p>
     </div>
 
@@ -71,6 +110,54 @@ function resetAll() {
       <div class="flex flex-wrap gap-3">
         <button class="lol-btn" @click="exportJson">↓ Exporter</button>
         <button class="lol-btn" @click="resetAll">↺ Tout effacer</button>
+      </div>
+    </div>
+
+    <div v-reveal="120" class="hex-frame p-5 md:p-8 mb-6">
+      <h2 class="text-[10px] uppercase tracking-widest text-lol-gold-2 mb-4">Sync GitHub</h2>
+      <p class="text-lol-grey-1 text-xs mb-3">
+        Push/pull l'état vers <code>backups/state.json</code> du repo <code>arena</code>.
+        Nécessite un
+        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" class="text-lol-blue-2 underline">
+          fine-grained PAT
+        </a>
+        avec scope <em>Repository contents: Read and Write</em> sur le repo.
+      </p>
+      <form autocomplete="on" @submit.prevent>
+        <input
+          type="text"
+          name="username"
+          value="arena-github"
+          autocomplete="username"
+          class="hidden"
+          readonly
+        />
+        <div class="flex items-center gap-2 mb-4">
+          <input
+            v-model="token"
+            :type="showToken ? 'text' : 'password'"
+            name="password"
+            autocomplete="current-password"
+            placeholder="Colle ton PAT ici (github_pat_...)"
+            class="flex-1 bg-lol-void border border-lol-gold-6 focus:border-lol-gold-3 outline-none px-3 py-2 text-lol-gold-1 text-xs font-mono"
+          />
+          <button
+            type="button"
+            class="text-lol-grey-1 hover:text-lol-gold-2 text-xs uppercase"
+            @click="showToken = !showToken"
+          >{{ showToken ? 'Cacher' : 'Voir' }}</button>
+        </div>
+      </form>
+      <div class="flex flex-wrap gap-3">
+        <button class="lol-btn" :disabled="!token || syncLoading" @click="push">
+          {{ syncLoading ? '...' : '↑ Push GitHub' }}
+        </button>
+        <button class="lol-btn" :disabled="!token || syncLoading" @click="pull">
+          {{ syncLoading ? '...' : '↓ Pull GitHub' }}
+        </button>
+      </div>
+      <div v-if="syncMsg" class="mt-4 p-3 border border-lol-blue-2/60 bg-lol-blue-2/10 text-lol-blue-2 text-sm">
+        {{ syncMsg }}
       </div>
     </div>
 

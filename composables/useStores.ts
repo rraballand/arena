@@ -344,6 +344,11 @@ export function deleteMatch(id: number) {
   store.value = store.value.filter(m => m.id !== id)
 }
 
+export function deleteBatch(batchId: string) {
+  const store = useMatchesStore()
+  store.value = store.value.filter(m => m.batchId !== batchId)
+}
+
 export function purgeMatches(game?: 'lol' | 'val') {
   const store = useMatchesStore()
   store.value = game ? store.value.filter(m => m.game !== game) : []

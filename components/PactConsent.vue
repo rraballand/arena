@@ -75,15 +75,15 @@ function decline() {
             </p>
             <p>
               <span class="text-lol-gold-2 font-display text-lg">⚜</span>
-              L'invocateur qui s'engage promet solennellement de : se pointer en Discord à l'heure,
-              ne pas dodge la file après trois defeats, et ne pas blâmer le jungler
+              L'invocateur qui s'engage promet solennellement de : débarquer à l'heure,
+              ne pas fuir après trois defeats, et ne pas blâmer le jungler
               <em class="text-lol-grey-1">(bon, ok, un peu, mais avec classe)</em>.
             </p>
             <p class="border-l-2 border-val-red pl-4 text-val-cream">
               <span class="text-val-red font-display text-lg">⚠</span>
               Toute désinscription tardive, no-show, ou <em>ghost</em> injustifié sera
               <strong class="text-val-red">vengé dans le sang et les larmes</strong> :
-              humiliation publique en réunion team, pénalité Discord custom emote, et bannissement
+              humiliation publique en réunion team, tournée générale offerte, et bannissement
               symbolique de la machine à café pendant 7 jours ouvrés.
             </p>
             <p class="text-lol-grey-1 text-xs italic text-center pt-2">
