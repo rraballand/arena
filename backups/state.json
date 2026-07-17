@@ -188,37 +188,6 @@
       }
     }
   ],
-  "matches": [
-    {
-      "id": 2,
-      "game": "val",
-      "createdAt": "2026-07-17T20:02:16.310Z",
-      "batchId": "val-1784318536310",
-      "benched": [
-        8
-      ],
-      "teamA": {
-        "name": "Les Corbeaux Nocturnes",
-        "playerIds": [
-          2,
-          11,
-          4,
-          9,
-          3
-        ]
-      },
-      "teamB": {
-        "name": "Les Rebelles Cinglants",
-        "playerIds": [
-          7,
-          10,
-          6,
-          5,
-          1
-        ]
-      },
-      "outcome": null
-    }
-  ],
-  "exportedAt": "2026-07-17T20:20:39.317Z"
+  "matches": [],
+  "exportedAt": "2026-07-17T20:21:55.333Z"
 }
