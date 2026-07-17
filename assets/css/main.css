@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background: #010A13;
+    color: #F0E6D2;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at top, rgba(3, 151, 171, 0.08) 0%, transparent 45%),
+      radial-gradient(ellipse at bottom, rgba(200, 155, 60, 0.06) 0%, transparent 55%),
+      #010A13;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .lol-btn {
+    @apply relative inline-flex items-center gap-2 px-8 py-3 uppercase tracking-widest text-sm font-medium text-lol-gold-2 border border-lol-gold-4 bg-gradient-to-b from-transparent to-lol-gold-6/40 transition-all duration-200;
+  }
+  .lol-btn::before,
+  .lol-btn::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid currentColor;
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity 0.2s, border-color 0.2s;
+  }
+  .lol-btn::before {
+    top: -4px;
+    left: -4px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .lol-btn::after {
+    bottom: -4px;
+    right: -4px;
+    border-left: 0;
+    border-top: 0;
+  }
+  .lol-btn:hover {
+    @apply text-lol-gold-1 border-lol-gold-2 shadow-hex;
+  }
+  .lol-btn:hover::before,
+  .lol-btn:hover::after {
+    opacity: 1;
+  }
+
+  .hex-frame {
+    position: relative;
+    background: linear-gradient(180deg, rgba(10, 20, 40, 0.9), rgba(1, 10, 19, 0.95));
+    border: 1px solid #463714;
+    transition: all 0.3s ease;
+  }
+  .hex-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, transparent 40%, rgba(200, 155, 60, 0.08) 50%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .hex-frame:hover::before {
+    opacity: 1;
+  }
+  .hex-frame:hover {
+    border-color: #C89B3C;
+    box-shadow: 0 0 40px rgba(200, 155, 60, 0.25);
+    transform: translateY(-4px);
+  }
+
+  .ornament {
+    background:
+      linear-gradient(90deg, transparent, #785A28 20%, #C89B3C 50%, #785A28 80%, transparent);
+    height: 1px;
+  }
+
+  .lol-title {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.15em;
+    background: linear-gradient(180deg, #F0E6D2 0%, #C8AA6E 50%, #785A28 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+  }
+
+  .role-badge {
+    @apply inline-flex items-center justify-center w-8 h-8 text-xs font-bold uppercase;
+    background: linear-gradient(180deg, #32281E, #091428);
+    border: 1px solid #785A28;
+    color: #C8AA6E;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+
+  .lol-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C8AA6E' stroke-width='2' stroke-linecap='square'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px 14px;
+    padding-right: 40px;
+  }
+  .lol-select.val {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF4655' stroke-width='2' stroke-linecap='square'><polyline points='6 9 12 15 18 9'/></svg>");
+  }
+
+  .rank-chip {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider;
+    border: 1px solid currentColor;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .val-accent {
+    background: linear-gradient(90deg, #FF4655, #C8272C);
+  }
+
+  .scanline {
+    position: relative;
+    overflow: hidden;
+  }
+  .scanline::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(200, 155, 60, 0.06) 50%, transparent 100%);
+    animation: shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
