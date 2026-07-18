@@ -34,8 +34,8 @@ function crossRegister(playerId: number) {
 function refresh() { /* local store reactive, no-op */ }
 
 const titles = {
-  lol: { title: "Faille de l'Invocateur", subtitle: 'League of Legends' },
-  val: { title: 'Protocole Radiant', subtitle: 'Valorant' },
+  lol: { title: 'League of Legends', subtitle: '' },
+  val: { title: 'Valorant', subtitle: '' },
 }
 </script>
 

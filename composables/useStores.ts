@@ -216,16 +216,27 @@ const VAL_NOUNS = [
   'Prédateurs', 'Snipers', 'Gardiens', 'Sabres',
 ]
 
-function randomTeamName(game: 'lol' | 'val', exclude: Set<string>) {
-  const adjs = game === 'lol' ? LOL_ADJECTIVES : VAL_ADJECTIVES
-  const nouns = game === 'lol' ? LOL_NOUNS : VAL_NOUNS
+function randomTeamName(
+  game: 'lol' | 'val',
+  exclude: Set<string>,
+  excludeAdjs: Set<string> = new Set(),
+  excludeNouns: Set<string> = new Set(),
+): { name: string; noun: string; adj: string } {
+  const adjs = (game === 'lol' ? LOL_ADJECTIVES : VAL_ADJECTIVES)
+    .filter(a => !excludeAdjs.has(a))
+  const nouns = (game === 'lol' ? LOL_NOUNS : VAL_NOUNS)
+    .filter(n => !excludeNouns.has(n))
+  const adjPool = adjs.length ? adjs : (game === 'lol' ? LOL_ADJECTIVES : VAL_ADJECTIVES)
+  const nounPool = nouns.length ? nouns : (game === 'lol' ? LOL_NOUNS : VAL_NOUNS)
+
   for (let i = 0; i < 30; i++) {
-    const noun = nouns[Math.floor(Math.random() * nouns.length)]
-    const adj = adjs[Math.floor(Math.random() * adjs.length)]
+    const noun = nounPool[Math.floor(Math.random() * nounPool.length)]
+    const adj = adjPool[Math.floor(Math.random() * adjPool.length)]
     const name = `Les ${noun} ${adj}`
-    if (!exclude.has(name)) return name
+    if (!exclude.has(name)) return { name, noun, adj }
   }
-  return `Équipe ${Math.floor(Math.random() * 9999)}`
+  const fallback = `Équipe ${Math.floor(Math.random() * 9999)}`
+  return { name: fallback, noun: fallback, adj: fallback }
 }
 
 function makeParallelMatches(
@@ -301,28 +312,14 @@ function makeParallelMatches(
     if (totalDiff === 0) break
   }
   const finalPlan = bestPlan ?? { matches: [], benched: active }
-  // If some players remain on the bench and >=2, split them into a partial extra match
-  if (finalPlan.benched.length >= 2) {
+  // Fill an extra match with the remaining bench.
+  // teamA gets up to `teamSize` players; the remaining bench spills into teamB before anyone sits out.
+  if (finalPlan.benched.length >= 1) {
     const shuffledBench = [...finalPlan.benched].sort(() => Math.random() - 0.5)
-    const half = Math.floor(shuffledBench.length / 2)
-    finalPlan.matches = [
-      ...finalPlan.matches,
-      { teamA: shuffledBench.slice(0, half), teamB: shuffledBench.slice(half, half * 2) },
-    ]
-    finalPlan.benched = shuffledBench.slice(half * 2)
-  }
-  // If exactly one player remains on the bench, drop them into the smallest team of an
-  // existing match so nobody sits out.
-  if (finalPlan.benched.length === 1 && finalPlan.matches.length) {
-    const lone = finalPlan.benched[0]
-    let target: { team: number[]; size: number } | null = null
-    for (const m of finalPlan.matches) {
-      for (const team of [m.teamA, m.teamB]) {
-        if (!target || team.length < target.size) target = { team, size: team.length }
-      }
-    }
-    target?.team.push(lone)
-    finalPlan.benched = []
+    const teamA = shuffledBench.slice(0, teamSize)
+    const teamB = shuffledBench.slice(teamSize, teamSize * 2)
+    finalPlan.matches = [...finalPlan.matches, { teamA, teamB }]
+    finalPlan.benched = shuffledBench.slice(teamSize * 2)
   }
   return finalPlan
 }
@@ -348,8 +345,11 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
   const batchId = `${game}-${Date.now()}`
   let nextId = matches.length ? Math.max(...matches.map(m => m.id)) + 1 : 1
   const created: Match[] = plan.matches.map(({ teamA, teamB }) => {
-    const nameA = randomTeamName(game, usedNames); usedNames.add(nameA)
-    const nameB = randomTeamName(game, usedNames); usedNames.add(nameB)
+    const a = randomTeamName(game, usedNames); usedNames.add(a.name)
+    const b = randomTeamName(game, usedNames, new Set([a.adj]), new Set([a.noun]))
+    usedNames.add(b.name)
+    const nameA = teamA.length === 0 ? 'Extérieur' : a.name
+    const nameB = teamB.length === 0 ? 'Extérieur' : b.name
     return {
       id: nextId++,
       game,
@@ -410,9 +410,9 @@ export function challengeBenchWithRandom(batchId: string, size?: number) {
   const remainingBench = bench.filter(id => !usedIds.has(id))
 
   const usedNames = new Set(store.value.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
-  const nameA = randomTeamName(game, usedNames)
-  usedNames.add(nameA)
-  const nameB = randomTeamName(game, usedNames)
+  const a = randomTeamName(game, usedNames)
+  usedNames.add(a.name)
+  const b = randomTeamName(game, usedNames, new Set([a.adj]), new Set([a.noun]))
 
   const nextId = store.value.length ? Math.max(...store.value.map(m => m.id)) + 1 : 1
   const newMatch: Match = {
@@ -421,8 +421,8 @@ export function challengeBenchWithRandom(batchId: string, size?: number) {
     createdAt: new Date().toISOString(),
     batchId,
     benched: remainingBench,
-    teamA: { name: nameA, playerIds: benchTeam, slots: teamSize },
-    teamB: { name: nameB, playerIds: opponentTeam, slots: teamSize },
+    teamA: { name: a.name, playerIds: benchTeam, slots: teamSize },
+    teamB: { name: b.name, playerIds: opponentTeam, slots: teamSize },
     outcome: null,
   }
 
@@ -450,7 +450,7 @@ export function challengeFromBench(batchId: string, opponentPlayerIds: number[],
   const remainingBench = shuffled.slice(teamSize)
 
   const usedNames = new Set(store.value.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
-  const benchName = randomTeamName(game, usedNames)
+  const benchNameGen = randomTeamName(game, usedNames)
 
   const nextId = store.value.length ? Math.max(...store.value.map(m => m.id)) + 1 : 1
   const newMatch: Match = {
@@ -459,7 +459,7 @@ export function challengeFromBench(batchId: string, opponentPlayerIds: number[],
     createdAt: new Date().toISOString(),
     batchId,
     benched: remainingBench,
-    teamA: { name: benchName, playerIds: benchTeam },
+    teamA: { name: benchNameGen.name, playerIds: benchTeam },
     teamB: { name: opponentName, playerIds: [...opponentPlayerIds] },
     outcome: null,
   }
