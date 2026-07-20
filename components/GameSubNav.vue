@@ -4,7 +4,7 @@ const route = useRoute()
 
 const items = computed(() => [
   { to: `/${props.game}`, label: 'Roster' },
-  { to: `/${props.game}/bracket`, label: 'Bracket' },
+  { to: `/${props.game}/bracket`, label: 'Tournois' },
   { to: `/${props.game}/leaderboard`, label: 'Classement' },
 ])
 </script>
@@ -27,5 +27,8 @@ const items = computed(() => [
         :class="game === 'val' ? 'bg-val-red' : 'bg-lol-gold-2'"
       />
     </NuxtLink>
+    <div v-if="$slots.actions" class="ml-auto flex items-center gap-2 md:gap-3">
+      <slot name="actions" />
+    </div>
   </div>
 </template>

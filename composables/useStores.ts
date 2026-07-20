@@ -17,6 +17,10 @@ export interface Match {
   teamA: MatchTeam
   teamB: MatchTeam
   outcome: Outcome | null
+  /** Cumulative points of teamA players snapshotted at match creation. */
+  powerA?: number
+  /** Cumulative points of teamB players snapshotted at match creation. */
+  powerB?: number
 }
 
 export interface FactoryMember {
@@ -239,6 +243,34 @@ function randomTeamName(
   return { name: fallback, noun: fallback, adj: fallback }
 }
 
+/**
+ * Split a pool of player IDs into two teams balanced by cumulative points.
+ * Uses a greedy fill: iterate players sorted by score desc, drop each into the
+ * currently weakest team (respecting `sizeA`/`sizeB` caps).
+ */
+function balancedSplit(
+  ids: number[],
+  scoreOf: (id: number) => number,
+  sizeA: number,
+  sizeB: number,
+): { teamA: number[]; teamB: number[] } {
+  const sorted = [...ids].sort((a, b) => scoreOf(b) - scoreOf(a))
+  const teamA: number[] = []
+  const teamB: number[] = []
+  let sumA = 0
+  let sumB = 0
+  for (const id of sorted) {
+    const canA = teamA.length < sizeA
+    const canB = teamB.length < sizeB
+    if (canA && (!canB || sumA <= sumB)) {
+      teamA.push(id); sumA += scoreOf(id)
+    } else if (canB) {
+      teamB.push(id); sumB += scoreOf(id)
+    }
+  }
+  return { teamA, teamB }
+}
+
 function makeParallelMatches(
   pool: Player[],
   scores: Map<number, ScoreCard>,
@@ -248,17 +280,17 @@ function makeParallelMatches(
   const active = pool.filter(p => !p.archived).map(p => p.id)
   const perMatch = teamSize * 2
   const matchCount = Math.floor(active.length / perMatch)
+  const scoreOf = (id: number) => scores.get(id)?.points ?? 0
   if (matchCount === 0) {
     // Not enough for a full match. Create one partial match if we have >= 2 players.
     if (active.length < 2) return { matches: [] as Array<{ teamA: number[]; teamB: number[] }>, benched: active }
-    const shuffled = [...active].sort(() => Math.random() - 0.5)
-    const half = Math.floor(shuffled.length / 2)
+    const half = Math.floor(active.length / 2)
+    const { teamA, teamB } = balancedSplit(active.slice(0, half * 2), scoreOf, half, half)
     return {
-      matches: [{ teamA: shuffled.slice(0, half), teamB: shuffled.slice(half, half * 2) }],
-      benched: shuffled.slice(half * 2),
+      matches: [{ teamA, teamB }],
+      benched: active.slice(half * 2),
     }
   }
-  const scoreOf = (id: number) => scores.get(id)?.points ?? 0
 
   let bestPlan: {
     matches: Array<{ teamA: number[]; teamB: number[] }>
@@ -312,14 +344,15 @@ function makeParallelMatches(
     if (totalDiff === 0) break
   }
   const finalPlan = bestPlan ?? { matches: [], benched: active }
-  // Fill an extra match with the remaining bench.
+  // Fill an extra match with the remaining bench, balanced by power.
   // teamA gets up to `teamSize` players; the remaining bench spills into teamB before anyone sits out.
   if (finalPlan.benched.length >= 1) {
-    const shuffledBench = [...finalPlan.benched].sort(() => Math.random() - 0.5)
-    const teamA = shuffledBench.slice(0, teamSize)
-    const teamB = shuffledBench.slice(teamSize, teamSize * 2)
+    const benchCount = Math.min(finalPlan.benched.length, teamSize * 2)
+    const sizeA = Math.min(teamSize, Math.ceil(benchCount / 2))
+    const sizeB = benchCount - sizeA
+    const { teamA, teamB } = balancedSplit(finalPlan.benched.slice(0, benchCount), scoreOf, sizeA, sizeB)
     finalPlan.matches = [...finalPlan.matches, { teamA, teamB }]
-    finalPlan.benched = shuffledBench.slice(teamSize * 2)
+    finalPlan.benched = finalPlan.benched.slice(benchCount)
   }
   return finalPlan
 }
@@ -344,6 +377,8 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
   const now = new Date().toISOString()
   const batchId = `${game}-${Date.now()}`
   let nextId = matches.length ? Math.max(...matches.map(m => m.id)) + 1 : 1
+  const scoreOf = (id: number) => scores.get(id)?.points ?? 0
+  const sumPower = (ids: number[]) => ids.reduce((s, id) => s + scoreOf(id), 0)
   const created: Match[] = plan.matches.map(({ teamA, teamB }) => {
     const a = randomTeamName(game, usedNames); usedNames.add(a.name)
     const b = randomTeamName(game, usedNames, new Set([a.adj]), new Set([a.noun]))
@@ -359,10 +394,56 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
       teamA: { name: nameA, playerIds: teamA, slots: teamSize },
       teamB: { name: nameB, playerIds: teamB, slots: teamSize },
       outcome: null,
+      powerA: sumPower(teamA),
+      powerB: sumPower(teamB),
     }
   })
   matchesStore.value = [...matches, ...created]
   return created
+}
+
+/**
+ * Reshuffle the players of a single match into two freshly balanced teams.
+ * Only allowed while the match has no outcome. Generates new team names,
+ * refreshes power snapshots from scores excluding this match.
+ */
+export function reshuffleMatch(id: number) {
+  const store = useMatchesStore()
+  const m = store.value.find(x => x.id === id)
+  if (!m) throw new Error('Match introuvable')
+  if (m.outcome) throw new Error('Match déjà joué')
+
+  const pool = [...m.teamA.playerIds, ...m.teamB.playerIds]
+  if (pool.length < 2) throw new Error('Pas assez de joueurs')
+
+  const otherMatches = store.value.filter(x => x.game === m.game && x.id !== id)
+  const scores = computeScores(otherMatches, m.game)
+  const scoreOf = (pid: number) => scores.get(pid)?.points ?? 0
+  const sumPower = (ids: number[]) => ids.reduce((s, pid) => s + scoreOf(pid), 0)
+
+  const sizeA = m.teamA.slots ?? Math.ceil(pool.length / 2)
+  const sizeB = m.teamB.slots ?? (pool.length - sizeA)
+  const { teamA, teamB } = balancedSplit(pool, scoreOf, sizeA, sizeB)
+
+  const usedNames = new Set(
+    store.value
+      .filter(x => x.game === m.game && x.id !== id)
+      .flatMap(x => [x.teamA.name, x.teamB.name]),
+  )
+  const a = randomTeamName(m.game, usedNames); usedNames.add(a.name)
+  const b = randomTeamName(m.game, usedNames, new Set([a.adj]), new Set([a.noun]))
+
+  store.value = store.value.map(x =>
+    x.id === id
+      ? {
+          ...x,
+          teamA: { ...x.teamA, name: a.name, playerIds: teamA },
+          teamB: { ...x.teamB, name: b.name, playerIds: teamB },
+          powerA: sumPower(teamA),
+          powerB: sumPower(teamB),
+        }
+      : x,
+  )
 }
 
 export function setMatchOutcome(id: number, outcome: Outcome) {
@@ -390,7 +471,6 @@ export function deleteBatch(batchId: string) {
  */
 export function challengeBenchWithRandom(batchId: string, size?: number) {
   const store = useMatchesStore()
-  const players = usePlayersStore().value
   const batchMatches = store.value.filter(m => m.batchId === batchId)
   if (!batchMatches.length) throw new Error('Session introuvable')
 
@@ -399,15 +479,21 @@ export function challengeBenchWithRandom(batchId: string, size?: number) {
   const defaultSize = batchMatches[0].teamA.slots ?? batchMatches[0].teamA.playerIds.length
   if (bench.length < 2) throw new Error(`Banc trop petit pour un match (${bench.length}/2)`)
 
-  const shuffled = [...bench].sort(() => Math.random() - 0.5)
-  const half = Math.floor(shuffled.length / 2)
+  const half = Math.floor(bench.length / 2)
   const benchTeamCount = Math.min(half, defaultSize)
   const teamSize = size ?? defaultSize
 
-  const benchTeam = shuffled.slice(0, benchTeamCount)
-  const opponentTeam = shuffled.slice(benchTeamCount, benchTeamCount * 2)
+  const preScores = computeScores(store.value, game)
+  const scoreOf = (id: number) => preScores.get(id)?.points ?? 0
+  const { teamA: benchTeam, teamB: opponentTeam } = balancedSplit(
+    bench.slice(0, benchTeamCount * 2),
+    scoreOf,
+    benchTeamCount,
+    benchTeamCount,
+  )
   const usedIds = new Set([...benchTeam, ...opponentTeam])
   const remainingBench = bench.filter(id => !usedIds.has(id))
+  const sumPower = (ids: number[]) => ids.reduce((s, id) => s + scoreOf(id), 0)
 
   const usedNames = new Set(store.value.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
   const a = randomTeamName(game, usedNames)
@@ -424,6 +510,8 @@ export function challengeBenchWithRandom(batchId: string, size?: number) {
     teamA: { name: a.name, playerIds: benchTeam, slots: teamSize },
     teamB: { name: b.name, playerIds: opponentTeam, slots: teamSize },
     outcome: null,
+    powerA: sumPower(benchTeam),
+    powerB: sumPower(opponentTeam),
   }
 
   store.value = store.value.map(m =>
@@ -445,9 +533,17 @@ export function challengeFromBench(batchId: string, opponentPlayerIds: number[],
   const teamSize = opponentPlayerIds.length
   if (bench.length < teamSize) throw new Error(`Banc insuffisant (${bench.length}/${teamSize})`)
 
-  const shuffled = [...bench].sort(() => Math.random() - 0.5)
-  const benchTeam = shuffled.slice(0, teamSize)
-  const remainingBench = shuffled.slice(teamSize)
+  const preScores = computeScores(store.value, game)
+  const scoreOf = (id: number) => preScores.get(id)?.points ?? 0
+  const sumPower = (ids: number[]) => ids.reduce((s, id) => s + scoreOf(id), 0)
+  // Pick the strongest bench players in top-N to face the opponent team, then re-balance internally.
+  const { teamA: benchTeam } = balancedSplit(
+    [...bench].sort((a, b) => scoreOf(b) - scoreOf(a)).slice(0, teamSize),
+    scoreOf,
+    teamSize,
+    0,
+  )
+  const remainingBench = bench.filter(id => !benchTeam.includes(id))
 
   const usedNames = new Set(store.value.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
   const benchNameGen = randomTeamName(game, usedNames)
@@ -462,6 +558,8 @@ export function challengeFromBench(batchId: string, opponentPlayerIds: number[],
     teamA: { name: benchNameGen.name, playerIds: benchTeam },
     teamB: { name: opponentName, playerIds: [...opponentPlayerIds] },
     outcome: null,
+    powerA: sumPower(benchTeam),
+    powerB: sumPower(opponentPlayerIds),
   }
 
   store.value = store.value.map(m =>

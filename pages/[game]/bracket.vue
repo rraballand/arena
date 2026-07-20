@@ -8,6 +8,8 @@ import {
   deleteBatch as storeDeleteBatch,
   challengeBenchWithRandom,
   purgeMatches,
+  computeScores,
+  reshuffleMatch as storeReshuffleMatch,
 } from '~/composables/useStores'
 import { useCurrentGame } from '~/composables/useCurrentGame'
 
@@ -66,6 +68,27 @@ function playerById(id: number) {
   return players.value.find(p => p.id === id)
 }
 
+function priorPower(m: Match, side: 'A' | 'B'): number {
+  // Snapshot at creation is authoritative. Fallback for legacy matches: recompute
+  // from all matches strictly created before this one.
+  const stored = side === 'A' ? m.powerA : m.powerB
+  if (typeof stored === 'number') return stored
+  const priorMatches = matchesStore.value.filter(
+    x => x.game === m.game && new Date(x.createdAt).getTime() < new Date(m.createdAt).getTime(),
+  )
+  const scores = computeScores(priorMatches, m.game)
+  const ids = side === 'A' ? m.teamA.playerIds : m.teamB.playerIds
+  return ids.reduce((sum, pid) => sum + (scores.get(pid)?.points ?? 0), 0)
+}
+
+function teamPower(m: Match, side: 'A' | 'B'): number {
+  return priorPower(m, side)
+}
+
+function powerDelta(m: Match): number {
+  return teamPower(m, 'A') - teamPower(m, 'B')
+}
+
 const teamSize = ref(5)
 const generating = ref(false)
 const genError = ref<string | null>(null)
@@ -96,6 +119,14 @@ function setOutcome(m: Match, outcome: Outcome) {
   storeSetOutcome(m.id, outcome)
 }
 
+function reshuffle(m: Match) {
+  try {
+    storeReshuffleMatch(m.id)
+  } catch (e: any) {
+    alert(e?.message || 'Erreur')
+  }
+}
+
 function benchChallenge(batch: Batch) {
   try {
     challengeBenchWithRandom(batch.batchId)
@@ -122,17 +153,15 @@ const titles = {
       />
     </div>
 
-    <GameSubNav :game="game" />
-
-    <div v-reveal="60" class="mt-8 hex-frame p-3 md:p-6 mb-6 md:mb-10 flex items-center gap-3 md:gap-4 justify-between flex-wrap">
-      <div class="flex items-center gap-2 md:gap-3">
-        <label class="text-[10px] uppercase tracking-widest text-lol-grey-1">Taille</label>
-        <input v-model.number="teamSize" type="number" min="1" max="6" class="w-12 md:w-16 bg-lol-void border border-lol-gold-6 rounded-lg focus:border-lol-gold-3 outline-none px-2 py-2 text-lol-gold-1 text-sm text-center" />
-        <span class="text-[10px] md:text-xs uppercase tracking-widest text-lol-grey-2">v{{ teamSize }}</span>
-      </div>
-      <div class="flex items-center gap-2 md:gap-3">
+    <GameSubNav :game="game">
+      <template #actions>
+        <div class="flex items-center gap-1.5">
+          <label class="text-[10px] uppercase tracking-widest text-lol-grey-1">Taille</label>
+          <input v-model.number="teamSize" type="number" min="1" max="6" class="w-12 bg-lol-void border border-lol-gold-6 rounded-lg focus:border-lol-gold-3 outline-none px-2 py-1.5 text-lol-gold-1 text-sm text-center" />
+          <span class="text-[10px] uppercase tracking-widest text-lol-grey-2">v{{ teamSize }}</span>
+        </div>
         <button
-          class="lol-btn !px-4 text-lg leading-none"
+          class="lol-btn !px-3 !py-1.5 text-base leading-none"
           :disabled="generating"
           title="Nouveau match"
           @click="newMatch"
@@ -142,11 +171,11 @@ const titles = {
         </button>
         <button
           v-if="matches.length"
-          class="lol-btn !px-4"
+          class="lol-btn !px-3 !py-1.5"
           title="Purger toutes les sessions"
           @click="purgeAll"
         >
-          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8">
             <polyline points="3 6 5 6 21 6" />
             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
             <path d="M10 11v6" />
@@ -154,18 +183,18 @@ const titles = {
             <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
           </svg>
         </button>
-      </div>
-    </div>
+      </template>
+    </GameSubNav>
 
-    <div v-if="genError" class="mb-6 p-3 border border-lol-red/60 bg-lol-red/10 text-lol-red text-sm">
+    <div v-if="genError" class="mt-6 mb-6 p-3 border border-lol-red/60 bg-lol-red/10 text-lol-red text-sm">
       {{ genError }}
     </div>
 
-    <div v-if="!batches.length" class="hex-frame p-8 md:p-12 text-center text-lol-grey-1">
+    <div v-if="!batches.length" class="mt-8 hex-frame p-8 md:p-12 text-center text-lol-grey-1">
       Aucun match. Clique <strong class="text-lol-gold-2">+</strong> pour créer des équipes équilibrées.
     </div>
 
-    <div v-else class="space-y-12">
+    <div v-else class="mt-8 space-y-12">
       <section
         v-for="batch in batches"
         :key="batch.batchId"
@@ -187,112 +216,82 @@ const titles = {
           </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
       <div v-for="m in batch.matches" :key="m.id" class="border border-lol-gold-6/60 rounded-lg p-3 md:p-4 bg-lol-void/30">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-3 md:gap-2 items-stretch">
           <!-- Team A -->
-          <div
-            class="p-4 border transition"
-            :class="m.outcome === 'A'
-              ? (game === 'val' ? 'border-val-red bg-val-red/10' : 'border-lol-gold-2 bg-lol-gold-6/20')
-              : m.outcome === 'B'
-                ? 'border-lol-gold-6 opacity-60'
-                : 'border-lol-gold-6'"
-          >
-            <div class="mb-3">
-              <div class="text-[10px] uppercase tracking-[0.3em] mb-1 h-4">
-                <span v-if="m.outcome === 'A'" class="text-lol-gold-2">Vainqueur</span>
-                <span v-else-if="m.outcome === 'B'" class="text-lol-grey-2">Défaite</span>
-                <span v-else-if="m.outcome === 'D'" class="text-lol-blue-2">Match nul</span>
-              </div>
-              <div class="font-display text-lg md:text-xl font-bold" :class="game === 'val' ? 'text-val-cream' : 'text-lol-gold-1'">
-                {{ m.teamA.name }}
-              </div>
+          <TeamCard
+            :team="m.teamA"
+            :game="game"
+            :power="teamPower(m, 'A')"
+            :outcome="m.outcome"
+            side="A"
+            :player-by-id="playerById"
+          />
+
+          <!-- VS separator -->
+          <div class="flex md:flex-col items-center justify-center gap-2 py-2 md:py-0">
+            <div class="hidden md:block flex-1 w-px bg-gradient-to-b from-transparent via-lol-gold-6 to-transparent" />
+            <div class="font-display text-lg md:text-xl text-lol-gold-2 tracking-widest select-none">VS</div>
+            <div
+              v-if="powerDelta(m) !== 0"
+              class="text-[9px] uppercase tracking-[0.2em] font-mono"
+              :class="powerDelta(m) > 0 ? 'text-lol-gold-2' : 'text-lol-red'"
+            >
+              {{ powerDelta(m) > 0 ? '+' : '' }}{{ powerDelta(m) }}
             </div>
-            <ul class="space-y-1">
-              <li v-for="pid in m.teamA.playerIds" :key="`a-${pid}`" class="flex items-center gap-2 text-sm text-lol-gold-1">
-                <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6 rounded-lg" />
-                <span class="truncate">{{ playerById(pid)?.pseudo || `#${pid}` }}</span>
-              </li>
-              <template v-if="m.teamA.playerIds.length > 0">
-                <li
-                  v-for="n in Math.max(0, (m.teamA.slots ?? m.teamA.playerIds.length) - m.teamA.playerIds.length)"
-                  :key="`a-empty-${n}`"
-                  class="flex items-center gap-2 text-sm text-lol-grey-2 italic"
-                >
-                  <div class="w-6 h-6 border border-dashed border-lol-gold-6/40 rounded-lg" />
-                  <span>Slot vide</span>
-                </li>
-              </template>
-            </ul>
+            <div class="hidden md:block flex-1 w-px bg-gradient-to-b from-transparent via-lol-gold-6 to-transparent" />
           </div>
 
           <!-- Team B -->
-          <div
-            class="p-4 border transition"
-            :class="m.outcome === 'B'
-              ? (game === 'val' ? 'border-val-red bg-val-red/10' : 'border-lol-gold-2 bg-lol-gold-6/20')
-              : m.outcome === 'A'
-                ? 'border-lol-gold-6 opacity-60'
-                : 'border-lol-gold-6'"
-          >
-            <div class="mb-3">
-              <div class="text-[10px] uppercase tracking-[0.3em] mb-1 h-4">
-                <span v-if="m.outcome === 'B'" class="text-lol-gold-2">Vainqueur</span>
-                <span v-else-if="m.outcome === 'A'" class="text-lol-grey-2">Défaite</span>
-                <span v-else-if="m.outcome === 'D'" class="text-lol-blue-2">Match nul</span>
-              </div>
-              <div class="font-display text-lg md:text-xl font-bold" :class="game === 'val' ? 'text-val-cream' : 'text-lol-gold-1'">
-                {{ m.teamB.name }}
-              </div>
-            </div>
-            <ul class="space-y-1">
-              <li v-for="pid in m.teamB.playerIds" :key="`b-${pid}`" class="flex items-center gap-2 text-sm text-lol-gold-1">
-                <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-6 h-6 border border-lol-gold-6 rounded-lg" />
-                <span class="truncate">{{ playerById(pid)?.pseudo || `#${pid}` }}</span>
-              </li>
-              <template v-if="m.teamB.playerIds.length > 0">
-                <li
-                  v-for="n in Math.max(0, (m.teamB.slots ?? m.teamB.playerIds.length) - m.teamB.playerIds.length)"
-                  :key="`b-empty-${n}`"
-                  class="flex items-center gap-2 text-sm text-lol-grey-2 italic"
-                >
-                  <div class="w-6 h-6 border border-dashed border-lol-gold-6/40 rounded-lg" />
-                  <span>Slot vide</span>
-                </li>
-              </template>
-            </ul>
-          </div>
+          <TeamCard
+            :team="m.teamB"
+            :game="game"
+            :power="teamPower(m, 'B')"
+            :outcome="m.outcome"
+            side="B"
+            :player-by-id="playerById"
+          />
         </div>
 
-        <div class="mt-5 pt-4 border-t border-lol-gold-6/40">
-          <div class="text-center mb-2 text-[9px] uppercase tracking-[0.3em] text-lol-grey-2">
-            Désigne le vainqueur
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-2 md:gap-0 md:border md:border-lol-gold-6/60 md:divide-x md:divide-lol-gold-6/60">
-            <button
-              class="px-3 py-2.5 text-xs uppercase tracking-[0.1em] transition text-center border md:border-0 rounded md:rounded-none"
-              :class="m.outcome === 'A'
-                ? 'text-lol-gold-1 bg-lol-gold-6/30 border-lol-gold-2'
-                : 'text-lol-grey-1 border-lol-gold-6/60 hover:text-lol-gold-1 hover:bg-lol-gold-6/10'"
-              @click="setOutcome(m, 'A')"
-            >{{ m.teamA.name }}</button>
-            <button
-              class="px-4 py-2 md:py-3 text-[10px] uppercase tracking-[0.3em] font-display transition text-center border md:border-0 rounded md:rounded-none"
-              :class="m.outcome === 'D'
-                ? 'text-lol-blue-2 bg-lol-blue-2/10 border-lol-blue-2'
-                : 'text-lol-grey-2 border-lol-gold-6/60 hover:text-lol-blue-2'"
-              @click="setOutcome(m, 'D')"
-            >Nul</button>
-            <button
-              class="px-3 py-2.5 text-xs uppercase tracking-[0.1em] transition text-center border md:border-0 rounded md:rounded-none"
-              :class="m.outcome === 'B'
-                ? 'text-lol-gold-1 bg-lol-gold-6/30 border-lol-gold-2'
-                : 'text-lol-grey-1 border-lol-gold-6/60 hover:text-lol-gold-1 hover:bg-lol-gold-6/10'"
-              @click="setOutcome(m, 'B')"
-            >{{ m.teamB.name }}</button>
-          </div>
+        <div class="mt-4 flex items-center justify-center gap-2">
+          <button
+            class="px-4 py-1.5 text-[10px] uppercase tracking-[0.25em] font-display border rounded-md transition"
+            :class="m.outcome === 'A'
+              ? 'text-lol-gold-1 bg-lol-gold-6/30 border-lol-gold-2 shadow-[0_0_12px_-4px_rgba(200,155,60,0.6)]'
+              : 'text-lol-grey-1 border-lol-gold-6/60 hover:text-lol-gold-1 hover:border-lol-gold-3'"
+            :title="`Vainqueur : ${m.teamA.name}`"
+            @click="setOutcome(m, 'A')"
+          >◄ A gagne</button>
+          <button
+            class="px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] font-display border rounded-md transition"
+            :class="m.outcome === 'D'
+              ? 'text-lol-blue-2 bg-lol-blue-2/10 border-lol-blue-2'
+              : 'text-lol-grey-2 border-lol-gold-6/60 hover:text-lol-blue-2'"
+            @click="setOutcome(m, 'D')"
+          >Nul</button>
+          <button
+            class="px-4 py-1.5 text-[10px] uppercase tracking-[0.25em] font-display border rounded-md transition"
+            :class="m.outcome === 'B'
+              ? 'text-lol-gold-1 bg-lol-gold-6/30 border-lol-gold-2 shadow-[0_0_12px_-4px_rgba(200,155,60,0.6)]'
+              : 'text-lol-grey-1 border-lol-gold-6/60 hover:text-lol-gold-1 hover:border-lol-gold-3'"
+            :title="`Vainqueur : ${m.teamB.name}`"
+            @click="setOutcome(m, 'B')"
+          >B gagne ►</button>
+          <button
+            v-if="!m.outcome && (m.teamA.playerIds.length + m.teamB.playerIds.length) >= 2"
+            class="ml-2 p-1.5 text-lol-grey-1 border border-lol-gold-6/60 hover:text-lol-gold-2 hover:border-lol-gold-3 rounded-md transition"
+            title="Rebrasser les équipes (équilibrage repris)"
+            @click="reshuffle(m)"
+          >
+            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2v6h-6" />
+              <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+              <path d="M3 22v-6h6" />
+              <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+            </svg>
+          </button>
         </div>
       </div>
         </div>
