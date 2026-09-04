@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MatchTeam, Outcome } from '~/composables/useStores'
+import { avatarSrc } from '~/composables/useStores'
 import type { Player } from '~/data/players'
 
 const props = defineProps<{
@@ -107,7 +108,7 @@ function toggleReveal(pid: number) {
         >
           <img
             v-if="playerById(pid)?.factoryAvatar"
-            :src="playerById(pid)?.factoryAvatar"
+            :src="avatarSrc(playerById(pid)?.factoryAvatar)"
             :alt="playerById(pid)?.pseudo"
             class="w-10 h-10 rounded-full border-2 border-lol-void ring-1 ring-lol-gold-6 object-cover transition-transform group-hover:scale-110 group-hover:z-10"
           />

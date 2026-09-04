@@ -5,6 +5,7 @@ import {
   fetchMembers,
   registerPlayer,
   crossRegisterPlayer,
+  avatarSrc,
   type FactoryMember,
 } from '~/composables/useStores'
 
@@ -70,7 +71,7 @@ function pick(m: FactoryMember) {
         class="flex items-center gap-3 p-2 border border-lol-gold-6 rounded-lg hover:border-lol-gold-3 hover:bg-lol-gold-6/20 transition text-left"
         @click="pick(m)"
       >
-        <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-8 h-8 border border-lol-gold-6 rounded-lg shrink-0" />
+        <img v-if="m.avatar_url" :src="avatarSrc(m.avatar_url)" :alt="m.name" class="w-8 h-8 border border-lol-gold-6 rounded-lg shrink-0" />
         <div class="min-w-0 flex-1">
           <div class="font-display font-semibold text-lol-gold-1 truncate text-sm">{{ m.name }}</div>
         </div>

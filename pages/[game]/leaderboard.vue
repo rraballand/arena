@@ -5,6 +5,7 @@ import {
   useMatchesStore,
   computeScores,
   SCORING,
+  avatarSrc,
 } from '~/composables/useStores'
 
 const route = useRoute()
@@ -24,7 +25,6 @@ interface LeaderboardEntry {
   playerId: number
   pseudo: string
   factoryAvatar?: string
-  archived: boolean
   points: number
   wins: number
   draws: number
@@ -43,7 +43,6 @@ const entries = computed<LeaderboardEntry[]>(() => {
       playerId: p.id,
       pseudo: p.pseudo,
       factoryAvatar: p.factoryAvatar,
-      archived: p.archived ?? false,
       points: c?.points ?? 0,
       wins: c?.wins ?? 0,
       draws: c?.draws ?? 0,
@@ -92,19 +91,19 @@ function medal(index: number) {
     <div v-if="entries.length >= 3" v-reveal="100" class="grid grid-cols-3 gap-2 md:gap-4 mb-8 md:mb-12 items-end">
       <div class="hex-frame p-3 md:p-4 text-center border" style="border-color: #B4B4B4">
         <div class="font-display text-3xl md:text-4xl font-black mb-1" style="color: #B4B4B4">02</div>
-        <img v-if="entries[1]?.factoryAvatar" :src="entries[1].factoryAvatar" :alt="entries[1].pseudo" class="w-12 h-12 md:w-16 md:h-16 mx-auto border" style="border-color: #B4B4B4" />
+        <img v-if="entries[1]?.factoryAvatar" :src="avatarSrc(entries[1].factoryAvatar)" :alt="entries[1].pseudo" class="w-12 h-12 md:w-16 md:h-16 mx-auto border" style="border-color: #B4B4B4" />
         <div class="mt-2 font-display font-bold text-lol-gold-1 truncate text-sm md:text-base">{{ entries[1]?.pseudo }}</div>
         <div class="font-display text-xl md:text-2xl text-lol-gold-2 mt-1">{{ entries[1]?.points }} pts</div>
       </div>
       <div class="hex-frame p-4 md:p-6 text-center border-2 border-lol-gold-2 shadow-hex-strong md:-translate-y-4">
         <div class="font-display text-4xl md:text-6xl font-black mb-1 text-lol-gold-1">01</div>
-        <img v-if="entries[0]?.factoryAvatar" :src="entries[0].factoryAvatar" :alt="entries[0].pseudo" class="w-16 h-16 md:w-24 md:h-24 mx-auto border-2 border-lol-gold-2 shadow-hex" />
+        <img v-if="entries[0]?.factoryAvatar" :src="avatarSrc(entries[0].factoryAvatar)" :alt="entries[0].pseudo" class="w-16 h-16 md:w-24 md:h-24 mx-auto border-2 border-lol-gold-2 shadow-hex" />
         <div class="mt-3 font-display font-bold text-lol-gold-1 truncate md:text-lg">{{ entries[0]?.pseudo }}</div>
         <div class="font-display text-2xl md:text-3xl text-lol-gold-2 mt-1">{{ entries[0]?.points }} pts</div>
       </div>
       <div class="hex-frame p-3 md:p-4 text-center border" style="border-color: #8C523A">
         <div class="font-display text-3xl md:text-4xl font-black mb-1" style="color: #8C523A">03</div>
-        <img v-if="entries[2]?.factoryAvatar" :src="entries[2].factoryAvatar" :alt="entries[2].pseudo" class="w-12 h-12 md:w-16 md:h-16 mx-auto border" style="border-color: #8C523A" />
+        <img v-if="entries[2]?.factoryAvatar" :src="avatarSrc(entries[2].factoryAvatar)" :alt="entries[2].pseudo" class="w-12 h-12 md:w-16 md:h-16 mx-auto border" style="border-color: #8C523A" />
         <div class="mt-2 font-display font-bold text-lol-gold-1 truncate text-sm md:text-base">{{ entries[2]?.pseudo }}</div>
         <div class="font-display text-xl md:text-2xl text-lol-gold-2 mt-1">{{ entries[2]?.points }} pts</div>
       </div>
@@ -132,7 +131,7 @@ function medal(index: number) {
           {{ String(i + 1).padStart(2, '0') }}
         </div>
         <div class="flex items-center gap-2 md:gap-3 min-w-0">
-          <img v-if="e.factoryAvatar" :src="e.factoryAvatar" :alt="e.pseudo" class="w-8 h-8 md:w-10 md:h-10 border border-lol-gold-6 rounded-lg transition" />
+          <img v-if="e.factoryAvatar" :src="avatarSrc(e.factoryAvatar)" :alt="e.pseudo" class="w-8 h-8 md:w-10 md:h-10 border border-lol-gold-6 rounded-lg transition" />
           <div class="min-w-0">
             <div class="font-display font-semibold text-lol-gold-1 truncate text-sm md:text-base">{{ e.pseudo }}</div>
           </div>
