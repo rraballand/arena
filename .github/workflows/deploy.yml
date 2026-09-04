@@ -36,6 +36,10 @@ jobs:
       - name: Generate
         env:
           NUXT_APP_BASE_URL: ${{ steps.base.outputs.base }}
+          # Inlined into the client bundle by design — must be a data-only,
+          # single-base PAT. See AIRTABLE.md.
+          NUXT_PUBLIC_AIRTABLE_PAT: ${{ secrets.AIRTABLE_PAT }}
+          NUXT_PUBLIC_AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
         run: pnpm generate
       - name: Add SPA fallback
         run: cp .output/public/index.html .output/public/404.html

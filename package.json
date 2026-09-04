@@ -7,7 +7,12 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "members:fetch": "node scripts/fetch-members.mjs",
+    "members:avatars": "node scripts/download-avatars.mjs",
+    "members:sync": "pnpm members:fetch && pnpm members:avatars",
+    "airtable:setup": "node scripts/airtable-setup.mjs",
+    "airtable:seed": "node scripts/airtable-setup.mjs --seed"
   },
   "dependencies": {
     "nuxt": "^3.13.0",

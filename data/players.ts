@@ -24,7 +24,12 @@ export interface Player {
   factoryUsername?: string
   factoryName?: string
   factoryAvatar?: string
-  archived?: boolean
+  /**
+   * Unavailable tonight: keeps their roster slot, history and points, but sits
+   * out the draw. Leaving a game for good is `lol.playing` / `valorant.playing`,
+   * which already excludes them — no separate "archived" flag needed.
+   */
+  shadow?: boolean
   lol: PlayerGame & { role?: LolRole; rank?: LolRank }
   valorant: PlayerGame & { role?: ValRole; rank?: ValRank }
 }

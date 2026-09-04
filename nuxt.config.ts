@@ -3,6 +3,18 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css'],
+  runtimeConfig: {
+    public: {
+      // The app is a static SPA, so these ship in the client bundle. The PAT must
+      // therefore be data-only and scoped to this single base — see AIRTABLE.md.
+      airtable: {
+        pat: process.env.NUXT_PUBLIC_AIRTABLE_PAT || '',
+        baseId: process.env.NUXT_PUBLIC_AIRTABLE_BASE_ID || '',
+        playersTable: process.env.NUXT_PUBLIC_AIRTABLE_PLAYERS_TABLE || 'Players',
+        matchesTable: process.env.NUXT_PUBLIC_AIRTABLE_MATCHES_TABLE || 'Matches',
+      },
+    },
+  },
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL || '/',
     head: {
