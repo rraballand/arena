@@ -10,6 +10,7 @@ import {
   purgeMatches,
   computeScores,
   reshuffleMatch as storeReshuffleMatch,
+  avatarSrc,
 } from '~/composables/useStores'
 import { useCurrentGame } from '~/composables/useCurrentGame'
 
@@ -314,7 +315,7 @@ const titles = {
               :key="`bench-${batch.batchId}-${pid}`"
               class="flex items-center gap-2 px-2 py-1 border border-lol-gold-6 rounded-lg text-xs text-lol-grey-1"
             >
-              <img v-if="playerById(pid)?.factoryAvatar" :src="playerById(pid)?.factoryAvatar" :alt="playerById(pid)?.pseudo" class="w-5 h-5 border border-lol-gold-6 rounded-lg" />
+              <img v-if="playerById(pid)?.factoryAvatar" :src="avatarSrc(playerById(pid)?.factoryAvatar)" :alt="playerById(pid)?.pseudo" class="w-5 h-5 border border-lol-gold-6 rounded-lg" />
               {{ playerById(pid)?.pseudo || `#${pid}` }}
             </div>
           </div>

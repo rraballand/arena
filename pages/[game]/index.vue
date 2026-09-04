@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCurrentGame } from '~/composables/useCurrentGame'
-import { usePlayersStore, crossRegisterPlayer } from '~/composables/useStores'
+import { usePlayersStore, crossRegisterPlayer, avatarSrc } from '~/composables/useStores'
 
 const route = useRoute()
 const game = computed(() => route.params.game as 'lol' | 'val')
@@ -66,7 +66,7 @@ const titles = {
           :game="game"
           deletable
           @deleted="refresh"
-          @archived="refresh"
+          @shadow="refresh"
         />
       </div>
     </div>
@@ -86,7 +86,7 @@ const titles = {
             :class="game === 'val' ? 'border-val-red/60' : 'border-lol-gold-4'"
           >
             <img
-              :src="p.factoryAvatar || `https://api.dicebear.com/9.x/adventurer/svg?seed=${p.avatarSeed}`"
+              :src="avatarSrc(p.factoryAvatar) || `https://api.dicebear.com/9.x/adventurer/svg?seed=${p.avatarSeed}`"
               :alt="p.pseudo"
               class="w-full h-full"
             />

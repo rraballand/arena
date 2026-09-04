@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import type { Player } from '~/data/players'
-import { leavePlayerGame, toggleArchivePlayer } from '~/composables/useStores'
+import { avatarSrc, leavePlayerGame, toggleShadowPlayer } from '~/composables/useStores'
 
 const props = defineProps<{ player: Player; game: 'lol' | 'val'; deletable?: boolean }>()
 const emit = defineEmits<{
   (e: 'deleted', id: number): void
-  (e: 'archived', id: number, archived: boolean): void
+  (e: 'shadow', id: number, shadow: boolean): void
 }>()
 
 const avatarUrl = computed(
   () =>
-    props.player.factoryAvatar ||
+    avatarSrc(props.player.factoryAvatar) ||
     `https://api.dicebear.com/9.x/adventurer/svg?seed=${props.player.avatarSeed}&backgroundType=gradientLinear&backgroundColor=091428,463714,0A323C`,
 )
 
-const isArchived = computed(() => props.player.archived === true)
+const isShadow = computed(() => props.player.shadow === true)
 
 function handleDelete() {
   const label = props.game === 'lol' ? 'LoL' : 'Valorant'
@@ -24,28 +24,28 @@ function handleDelete() {
 }
 
 function toggleShadow() {
-  const next = !isArchived.value
-  toggleArchivePlayer(props.player.id, next)
-  emit('archived', props.player.id, next)
+  const next = !isShadow.value
+  toggleShadowPlayer(props.player.id, next)
+  emit('shadow', props.player.id, next)
 }
 </script>
 
 <template>
   <div
     class="hex-frame relative p-3 group"
-    :class="{ 'opacity-50 grayscale hover:opacity-80': isArchived }"
+    :class="{ 'opacity-50 grayscale hover:opacity-80': isShadow }"
   >
     <div class="absolute top-1 right-1 flex items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition">
       <button
         type="button"
         class="w-6 h-6 flex items-center justify-center text-xs border border-transparent transition"
-        :class="isArchived
+        :class="isShadow
           ? 'text-lol-blue-2 hover:border-lol-blue-2/60'
           : 'text-lol-grey-2 hover:text-lol-blue-2 hover:border-lol-blue-2/60'"
-        :title="isArchived ? 'Ré-activer' : 'Mettre en shadow (indisponible ce soir)'"
+        :title="isShadow ? 'Ré-activer' : 'Mettre en shadow (indisponible ce soir)'"
         @click.stop.prevent="toggleShadow"
       >
-        {{ isArchived ? '☀' : '☾' }}
+        {{ isShadow ? '☀' : '☾' }}
       </button>
       <button
         v-if="deletable"
@@ -89,7 +89,7 @@ function toggleShadow() {
         >
           {{ player.pseudo }}
         </h3>
-        <div v-if="isArchived" class="text-[9px] uppercase tracking-widest text-lol-blue-2">
+        <div v-if="isShadow" class="text-[9px] uppercase tracking-widest text-lol-blue-2">
           ☾ Shadow · indispo ce soir
         </div>
       </div>

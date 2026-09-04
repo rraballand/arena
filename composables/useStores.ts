@@ -1,5 +1,7 @@
 import type { Player } from '~/data/players'
-import { useLocalStore } from './useLocalStore'
+import { fieldsToMatch, fieldsToPlayer, matchToFields, playerToFields } from './airtableMappers'
+import { useAirtableConfig } from './useAirtable'
+import { useRemoteStore } from './useRemoteStore'
 
 export type Outcome = 'A' | 'B' | 'D'
 
@@ -27,42 +29,88 @@ export interface FactoryMember {
   id: number
   username: string
   name: string
+  /** Repo-relative path under public/ (e.g. `avatars/jdoe.png`), never a full URL. */
   avatar_url: string | null
-  web_url: string | null
 }
 
 // ---------------- Stores ----------------
 
+/** Airtable-backed, localStorage-cached. Returns the raw ref so every mutation below is unchanged. */
+export function usePlayersRemote() {
+  return useRemoteStore<Player>({
+    key: 'players',
+    table: useAirtableConfig().playersTable,
+    toFields: playerToFields,
+    fromFields: fieldsToPlayer,
+    idOf: p => p.id,
+  })
+}
+
+export function useMatchesRemote() {
+  return useRemoteStore<Match>({
+    key: 'matches',
+    table: useAirtableConfig().matchesTable,
+    toFields: matchToFields,
+    fromFields: fieldsToMatch,
+    idOf: m => m.id,
+  })
+}
+
 export function usePlayersStore() {
-  return useLocalStore<Player[]>('players', [])
+  return usePlayersRemote().state
 }
 export function useMatchesStore() {
-  return useLocalStore<Match[]>('matches', [])
+  return useMatchesRemote().state
 }
+
+
 export function useMembersStore() {
   return useState<FactoryMember[]>('factory-members', () => [])
+}
+
+/** Prefix a public/ asset path with the app baseURL (GitHub Pages ships under a subpath). */
+export function publicAsset(path: string) {
+  const base = useRuntimeConfig().app.baseURL.replace(/\/+$/, '')
+  return `${base}/${path.replace(/^\/+/, '')}`
+}
+
+/**
+ * Resolve a stored avatar path for an `<img src>`.
+ *
+ * Avatar paths are *persisted* repo-relative (`avatars/x.svg`) and resolved only
+ * here, at render time. Persisting the resolved form would bake in the current
+ * `baseURL` — `/` in dev, `/arena/` on GitHub Pages — so a row written by one
+ * environment would 404 in the other. Both now share one Airtable base, which
+ * makes that a real breakage rather than a theoretical one.
+ *
+ * Legacy absolute URLs (GitLab, Gravatar) pass through untouched; a legacy
+ * leading slash is absorbed by `publicAsset`, so old rows self-heal.
+ */
+export function avatarSrc(path?: string | null): string | undefined {
+  if (!path) return undefined
+  if (/^https?:\/\//i.test(path)) return path
+  return publicAsset(path)
 }
 
 export async function fetchMembers() {
   const state = useMembersStore()
   if (state.value.length) return state.value
-  const url = `${useRuntimeConfig().app.baseURL}factory-members.json`.replace(/\/{2,}/g, '/')
-  const members = await $fetch<FactoryMember[]>(url)
-  state.value = members
-  return members
+  // Kept verbatim — `avatar_url` stays repo-relative, see `avatarSrc`.
+  state.value = await $fetch<FactoryMember[]>(publicAsset('factory-members.json'))
+  return state.value
 }
 
 // ---------------- Player ops ----------------
-
-export function findPlayer(pid: number) {
-  return usePlayersStore().value.find(p => p.id === pid)
-}
 
 export function nextPlayerId() {
   const list = usePlayersStore().value
   return list.length ? Math.max(...list.map(p => p.id)) + 1 : 1
 }
 
+/**
+ * Sign-up captures identity only. Role, rank and main are filled in later from
+ * /admin — asking for them at the door slowed everyone down for nothing.
+ */
 export interface RegisterInput {
   factoryUsername: string
   pseudo: string
@@ -84,6 +132,8 @@ export function registerPlayer(input: RegisterInput): Player {
       if (existing.valorant.playing) throw new Error('Déjà inscrit à Valorant')
       existing.valorant = { playing: true }
     }
+    // Signing up again means they are here and available.
+    delete existing.shadow
     store.value = [...store.value]
     return existing
   }
@@ -98,8 +148,8 @@ export function registerPlayer(input: RegisterInput): Player {
     factoryName: input.factoryName,
     factoryAvatar: input.factoryAvatar,
     registeredAt: now,
-    lol: input.game === 'lol' ? { playing: true } : { playing: false },
-    valorant: input.game === 'val' ? { playing: true } : { playing: false },
+    lol: { playing: input.game === 'lol' },
+    valorant: { playing: input.game === 'val' },
   }
   store.value = [...store.value, player]
   return player
@@ -119,26 +169,93 @@ export function leavePlayerGame(id: number, game: 'lol' | 'val') {
     return { player: p, deleted: false }
   }
 
+  // Kept, not deleted: matches reference them, and `playing: false` already
+  // keeps them out of every draw.
   const hasHistory = matches.some(
     m => m.teamA.playerIds.includes(id) || m.teamB.playerIds.includes(id),
   )
   if (hasHistory) {
-    p.archived = true
     store.value = [...store.value]
-    return { player: p, deleted: false, archived: true }
+    return { player: p, deleted: false, kept: true }
   }
 
   store.value = store.value.filter(pl => pl.id !== id)
   return { deleted: true }
 }
 
-export function toggleArchivePlayer(id: number, archived: boolean) {
+/**
+ * Unavailable tonight. Temporary and reversible: the player keeps their roster
+ * slot, their history and their points, but is skipped by the draw.
+ */
+export function toggleShadowPlayer(id: number, shadow: boolean) {
   const store = usePlayersStore()
   const p = store.value.find(pl => pl.id === id)
   if (!p) return null
-  p.archived = archived
+  if (shadow) p.shadow = true
+  else delete p.shadow
   store.value = [...store.value]
   return p
+}
+
+export interface PlayerPatch {
+  pseudo?: string
+  shadow?: boolean
+  lol?: Partial<Player['lol']>
+  valorant?: Partial<Player['valorant']>
+}
+
+/**
+ * Admin edit. Merges the patch field by field so a form can send only what it
+ * touched; an empty string clears an optional field rather than storing `''`,
+ * which keeps the Airtable round-trip stable (see `airtableMappers`).
+ */
+export function updatePlayer(id: number, patch: PlayerPatch): Player | null {
+  const store = usePlayersStore()
+  const p = store.value.find(pl => pl.id === id)
+  if (!p) return null
+
+  if (patch.pseudo !== undefined) p.pseudo = patch.pseudo.trim() || p.pseudo
+  if (patch.shadow !== undefined) {
+    if (patch.shadow) p.shadow = true
+    else delete p.shadow
+  }
+
+  // Handled one game at a time on purpose: `lol` and `valorant` have different
+  // role/rank unions, so a shared loop would only typecheck behind a cast.
+  if (patch.lol) p.lol = pruned({ ...p.lol, ...patch.lol })
+  if (patch.valorant) p.valorant = pruned({ ...p.valorant, ...patch.valorant })
+
+  store.value = [...store.value]
+  return p
+}
+
+/** Drop blank optionals rather than persisting `''`, which would churn the Airtable diff. */
+function pruned<T extends { role?: unknown; rank?: unknown; main?: string }>(profile: T): T {
+  const next = { ...profile }
+  if (!next.role) delete next.role
+  if (!next.rank) delete next.rank
+  if (!next.main?.trim()) delete next.main
+  else next.main = next.main.trim()
+  return next
+}
+
+/**
+ * Hard delete. Refuses when the player appears in a match: removing them would
+ * leave dangling ids in team rosters and falsify past results. Take them out of
+ * both games instead — `leavePlayerGame` keeps the record and stops the draw
+ * from picking them.
+ */
+export function deletePlayer(id: number): { deleted: boolean; reason?: 'history' | 'unknown' } {
+  const store = usePlayersStore()
+  if (!store.value.some(p => p.id === id)) return { deleted: false, reason: 'unknown' }
+
+  const hasHistory = useMatchesStore().value.some(
+    m => m.teamA.playerIds.includes(id) || m.teamB.playerIds.includes(id) || (m.benched ?? []).includes(id),
+  )
+  if (hasHistory) return { deleted: false, reason: 'history' }
+
+  store.value = store.value.filter(p => p.id !== id)
+  return { deleted: true }
 }
 
 export function crossRegisterPlayer(id: number, game: 'lol' | 'val') {
@@ -277,7 +394,8 @@ function makeParallelMatches(
   teamSize: number,
   existingKeys: Set<string>,
 ) {
-  const active = pool.filter(p => !p.archived).map(p => p.id)
+  // `pool` is already filtered by the only caller (`createBatch`).
+  const active = pool.map(p => p.id)
   const perMatch = teamSize * 2
   const matchCount = Math.floor(active.length / perMatch)
   const scoreOf = (id: number) => scores.get(id)?.points ?? 0
@@ -362,8 +480,9 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
   const matchesStore = useMatchesStore()
   const matches = matchesStore.value
 
+  // `playing` covers who is in the tournament, `shadow` who showed up tonight.
   const pool = players.filter(p =>
-    !p.archived && (game === 'lol' ? p.lol.playing : p.valorant.playing),
+    !p.shadow && (game === 'lol' ? p.lol.playing : p.valorant.playing),
   )
   if (pool.length < 2) {
     throw new Error(`Roster insuffisant (${pool.length}/2)`)
@@ -454,11 +573,6 @@ export function setMatchOutcome(id: number, outcome: Outcome) {
   store.value = [...store.value]
 }
 
-export function deleteMatch(id: number) {
-  const store = useMatchesStore()
-  store.value = store.value.filter(m => m.id !== id)
-}
-
 export function deleteBatch(batchId: string) {
   const store = useMatchesStore()
   store.value = store.value.filter(m => m.batchId !== batchId)
@@ -523,51 +637,6 @@ export function challengeBenchWithRandom(batchId: string, size?: number) {
  * Create an additional match inside an existing batch, pitting the bench against an
  * existing team of that batch. Removes the used bench players from all matches of the batch.
  */
-export function challengeFromBench(batchId: string, opponentPlayerIds: number[], opponentName: string) {
-  const store = useMatchesStore()
-  const batchMatches = store.value.filter(m => m.batchId === batchId)
-  if (!batchMatches.length) throw new Error('Session introuvable')
-
-  const bench = batchMatches[0].benched ?? []
-  const game = batchMatches[0].game
-  const teamSize = opponentPlayerIds.length
-  if (bench.length < teamSize) throw new Error(`Banc insuffisant (${bench.length}/${teamSize})`)
-
-  const preScores = computeScores(store.value, game)
-  const scoreOf = (id: number) => preScores.get(id)?.points ?? 0
-  const sumPower = (ids: number[]) => ids.reduce((s, id) => s + scoreOf(id), 0)
-  // Pick the strongest bench players in top-N to face the opponent team, then re-balance internally.
-  const { teamA: benchTeam } = balancedSplit(
-    [...bench].sort((a, b) => scoreOf(b) - scoreOf(a)).slice(0, teamSize),
-    scoreOf,
-    teamSize,
-    0,
-  )
-  const remainingBench = bench.filter(id => !benchTeam.includes(id))
-
-  const usedNames = new Set(store.value.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
-  const benchNameGen = randomTeamName(game, usedNames)
-
-  const nextId = store.value.length ? Math.max(...store.value.map(m => m.id)) + 1 : 1
-  const newMatch: Match = {
-    id: nextId,
-    game,
-    createdAt: new Date().toISOString(),
-    batchId,
-    benched: remainingBench,
-    teamA: { name: benchNameGen.name, playerIds: benchTeam },
-    teamB: { name: opponentName, playerIds: [...opponentPlayerIds] },
-    outcome: null,
-    powerA: sumPower(benchTeam),
-    powerB: sumPower(opponentPlayerIds),
-  }
-
-  store.value = store.value.map(m =>
-    m.batchId === batchId ? { ...m, benched: remainingBench } : m,
-  ).concat(newMatch)
-}
-
-
 export function purgeMatches(game?: 'lol' | 'val') {
   const store = useMatchesStore()
   store.value = game ? store.value.filter(m => m.game !== game) : []
