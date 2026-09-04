@@ -2,666 +2,523 @@
   {
     "id": 355,
     "username": "raffanni",
-    "name": "AFFANNI Romain",
-    "avatar_url": "avatars/raffanni.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/raffanni"
+    "name": "Romain Affanni",
+    "avatar_url": "avatars/raffanni.png"
   },
   {
     "id": 244,
     "username": "alan.duchene",
-    "name": "Alan DUCHENE",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/244/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/alan.duchene"
+    "name": "Alan Duchene",
+    "avatar_url": "avatars/alan.duchene.png"
   },
   {
     "id": 347,
     "username": "live.comguesmianoir",
     "name": "Anwar Guesmi",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/347/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/live.comguesmianoir"
+    "avatar_url": "avatars/live.comguesmianoir.webp"
   },
   {
     "id": 475,
     "username": "haoutcheme",
-    "name": "AOUTCHEME Harris",
-    "avatar_url": "avatars/haoutcheme.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/haoutcheme"
+    "name": "Harris Aoutcheme",
+    "avatar_url": "avatars/haoutcheme.jpg"
   },
   {
     "id": 466,
     "username": "lebourblanc.a",
-    "name": "Arnaud LE BOURBLANC",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/466/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/lebourblanc.a"
+    "name": "Arnaud Le Bourblanc",
+    "avatar_url": "avatars/lebourblanc.a.jpg"
   },
   {
     "id": 513,
     "username": "sbailhache",
-    "name": "BAILHACHE Simon",
-    "avatar_url": "avatars/sbailhache.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/sbailhache"
+    "name": "Simon Bailhache",
+    "avatar_url": "avatars/sbailhache.jpg"
   },
   {
     "id": 309,
     "username": "cbaluhet",
-    "name": "BALUHET Charline",
-    "avatar_url": "avatars/cbaluhet.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/cbaluhet"
+    "name": "Charline Baluhet",
+    "avatar_url": "avatars/cbaluhet.png"
   },
   {
     "id": 299,
     "username": "sbardy.ext",
-    "name": "BARDY Sophie",
-    "avatar_url": "avatars/sbardy.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/sbardy.ext"
+    "name": "Sophie Bardy",
+    "avatar_url": "avatars/sbardy.ext.jpg"
   },
   {
     "id": 636,
     "username": "rbebin.ext",
-    "name": "BEBIN Ronan",
-    "avatar_url": "avatars/rbebin.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/rbebin.ext"
+    "name": "Ronan Bebin",
+    "avatar_url": "avatars/rbebin.ext.jpg"
   },
   {
     "id": 660,
     "username": "ilyes.benjemaa",
-    "name": "BENJEMAA Ilyes",
-    "avatar_url": "avatars/ilyes.benjemaa.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ilyes.benjemaa"
+    "name": "Ilyes Benjemaa",
+    "avatar_url": "avatars/ilyes.benjemaa.svg"
   },
   {
     "id": 163,
     "username": "ebernoux",
-    "name": "BERNOUX Etienne",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/163/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ebernoux"
+    "name": "Etienne Bernoux",
+    "avatar_url": "avatars/ebernoux.jpg"
   },
   {
     "id": 637,
     "username": "abordereau",
-    "name": "BORDEREAU Axel",
-    "avatar_url": "avatars/abordereau.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/abordereau"
+    "name": "Axel Bordereau",
+    "avatar_url": "avatars/abordereau.jpg"
   },
   {
     "id": 631,
     "username": "mboulay",
-    "name": "BOULAY Maud",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/631/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mboulay"
+    "name": "Maud Boulay",
+    "avatar_url": "avatars/mboulay.jpg"
   },
   {
     "id": 659,
     "username": "dylan.cardoso",
-    "name": "CARDOSO Dylan",
-    "avatar_url": "avatars/dylan.cardoso.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/dylan.cardoso"
+    "name": "Dylan Cardoso",
+    "avatar_url": "avatars/dylan.cardoso.svg"
   },
   {
     "id": 556,
     "username": "mcarlier",
-    "name": "CARLIER Marine",
-    "avatar_url": "avatars/mcarlier.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mcarlier"
+    "name": "Marine Carlier",
+    "avatar_url": "avatars/mcarlier.jpg"
   },
   {
     "id": 501,
     "username": "cdemaison",
     "name": "Chloé Demaison",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/501/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/cdemaison"
-  },
-  {
-    "id": 610,
-    "username": "project_411_bot_5b7ae297e67423f7e4c05760d522686a",
-    "name": "CI/CD access token",
-    "avatar_url": "avatars/project_411_bot_5b7ae297e67423f7e4c05760d522686a.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/project_411_bot_5b7ae297e67423f7e4c05760d522686a"
+    "avatar_url": "avatars/cdemaison.jpg"
   },
   {
     "id": 346,
     "username": "acolin",
-    "name": "COLIN Alexandre",
-    "avatar_url": "avatars/acolin.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/acolin"
+    "name": "Alexandre Colin",
+    "avatar_url": "avatars/acolin.jpg"
   },
   {
     "id": 459,
     "username": "vcroas",
-    "name": "CROAS Valentine",
-    "avatar_url": "avatars/vcroas.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/vcroas"
+    "name": "Valentine Croas",
+    "avatar_url": "avatars/vcroas.jpg"
   },
   {
     "id": 570,
     "username": "dledantec.ext",
     "name": "Damien Le Dantec",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/570/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/dledantec.ext"
+    "avatar_url": "avatars/dledantec.ext.jpg"
   },
   {
     "id": 629,
     "username": "adang",
-    "name": "DANG Alexis",
-    "avatar_url": "avatars/adang.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/adang"
+    "name": "Alexis Dang",
+    "avatar_url": "avatars/adang.jpg"
   },
   {
     "id": 395,
     "username": "dderoef",
-    "name": "DE ROEF Damien",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/395/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/dderoef"
+    "name": "Damien De Roef",
+    "avatar_url": "avatars/dderoef.jpg"
   },
   {
     "id": 517,
     "username": "cdeliau",
-    "name": "DELIAU Clement",
-    "avatar_url": "avatars/cdeliau.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/cdeliau"
+    "name": "Clement Deliau",
+    "avatar_url": "avatars/cdeliau.jpg"
   },
   {
     "id": 359,
     "username": "adevaux",
-    "name": "DEVAUX Amandine",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/359/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/adevaux"
+    "name": "Amandine Devaux",
+    "avatar_url": "avatars/adevaux.jpg"
   },
   {
     "id": 265,
     "username": "mdigeon",
-    "name": "DIGEON Matthieu",
-    "avatar_url": "avatars/mdigeon.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mdigeon"
+    "name": "Matthieu Digeon",
+    "avatar_url": "avatars/mdigeon.png"
   },
   {
     "id": 183,
     "username": "brisset.d",
-    "name": "Dimitri BRISSET",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/183/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/brisset.d"
+    "name": "Dimitri Brisset",
+    "avatar_url": "avatars/brisset.d.png"
   },
   {
     "id": 581,
     "username": "vdoba",
-    "name": "DOBA Vincent",
-    "avatar_url": "avatars/vdoba.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/vdoba"
+    "name": "Vincent Doba",
+    "avatar_url": "avatars/vdoba.jpg"
   },
   {
     "id": 634,
     "username": "sdouglas",
-    "name": "DOUGLAS Shanice",
-    "avatar_url": "avatars/sdouglas.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/sdouglas"
+    "name": "Shanice Douglas",
+    "avatar_url": "avatars/sdouglas.png"
   },
   {
     "id": 438,
     "username": "mdudout",
-    "name": "DUDOUT Mélanie",
-    "avatar_url": "avatars/mdudout.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mdudout"
+    "name": "Mélanie Dudout",
+    "avatar_url": "avatars/mdudout.jpg"
   },
   {
     "id": 289,
     "username": "ldumet",
-    "name": "DUMET Laurent",
-    "avatar_url": "avatars/ldumet.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ldumet"
+    "name": "Laurent Dumet",
+    "avatar_url": "avatars/ldumet.jpg"
   },
   {
     "id": 298,
     "username": "live.comedwin.oursel",
-    "name": "Edwin OURSEL",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/298/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/live.comedwin.oursel"
+    "name": "Edwin Oursel",
+    "avatar_url": "avatars/live.comedwin.oursel.jpg"
   },
   {
     "id": 642,
     "username": "selmessaoudi",
-    "name": "EL MESSAOUDI Sanaa",
-    "avatar_url": "avatars/selmessaoudi.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/selmessaoudi"
+    "name": "Sanaa El Messaoudi",
+    "avatar_url": "avatars/selmessaoudi.jpg"
   },
   {
     "id": 640,
     "username": "selhadhri",
-    "name": "EL-HADHRI Souheil",
-    "avatar_url": "avatars/selhadhri.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/selhadhri"
+    "name": "Souheil El-Hadhri",
+    "avatar_url": "avatars/selhadhri.svg"
   },
   {
     "id": 249,
     "username": "bfosses",
-    "name": "FOSSES Benjamin",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/249/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/bfosses"
+    "name": "Benjamin Fosses",
+    "avatar_url": "avatars/bfosses.jpg"
   },
   {
     "id": 2,
     "username": "fxvende",
-    "name": "François Xavier VENDE",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/2/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/fxvende"
+    "name": "François Xavier Vende",
+    "avatar_url": "avatars/fxvende.jpg"
   },
   {
     "id": 553,
     "username": "ftiroumalai.ext",
-    "name": "Freddy TIROUMALAI",
-    "avatar_url": "avatars/ftiroumalai.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ftiroumalai.ext"
+    "name": "Freddy Tiroumalai",
+    "avatar_url": "avatars/ftiroumalai.ext.png"
   },
   {
     "id": 281,
     "username": "ggabellec",
-    "name": "GABELLEC Geoffroy",
-    "avatar_url": "avatars/ggabellec.jpg",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ggabellec"
-  },
-  {
-    "id": 619,
-    "username": "project_202_bot_7f4d8291b12a8b2f612b4e4b9db1e7d0",
-    "name": "GLPAT_CI_JOB_RELEASE",
-    "avatar_url": "avatars/project_202_bot_7f4d8291b12a8b2f612b4e4b9db1e7d0.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/project_202_bot_7f4d8291b12a8b2f612b4e4b9db1e7d0"
+    "name": "Geoffroy Gabellec",
+    "avatar_url": "avatars/ggabellec.jpg"
   },
   {
     "id": 481,
     "username": "rgrand.ext",
-    "name": "GRAND Raphaël",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/481/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/rgrand.ext"
+    "name": "Raphaël Grand",
+    "avatar_url": "avatars/rgrand.ext.png"
   },
   {
     "id": 496,
     "username": "ngrasso",
-    "name": "GRASSO Nahuel",
-    "avatar_url": "avatars/ngrasso.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ngrasso"
+    "name": "Nahuel Grasso",
+    "avatar_url": "avatars/ngrasso.png"
   },
   {
     "id": 621,
     "username": "jhaumont.ext",
-    "name": "HAUMONT Julien",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/621/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/jhaumont.ext"
+    "name": "Julien Haumont",
+    "avatar_url": "avatars/jhaumont.ext.jpg"
   },
   {
     "id": 465,
     "username": "pheng.hh",
     "name": "Heng-Hoat",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/465/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/pheng.hh"
+    "avatar_url": "avatars/pheng.hh.jpg"
   },
   {
     "id": 133,
     "username": "jctrebalag",
     "name": "Jean-Christophe Trebalag",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/133/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/jctrebalag"
+    "avatar_url": "avatars/jctrebalag.jpg"
   },
   {
     "id": 388,
     "username": "jmpacholczyk1",
-    "name": "Jean-Marc PACHOLCZYK",
-    "avatar_url": "avatars/jmpacholczyk1.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/jmpacholczyk1"
+    "name": "Jean-Marc Pacholczyk",
+    "avatar_url": "avatars/jmpacholczyk1.jpg"
   },
   {
     "id": 132,
     "username": "jufournier",
     "name": "Jules Fournier",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/132/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/jufournier"
+    "avatar_url": "avatars/jufournier.jpg"
   },
   {
     "id": 324,
     "username": "julie.lesage",
     "name": "Julie Lesage",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/324/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/julie.lesage"
+    "avatar_url": "avatars/julie.lesage.jpg"
   },
   {
     "id": 272,
     "username": "julien.lazewski",
     "name": "Julien Lazewski",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/272/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/julien.lazewski"
+    "avatar_url": "avatars/julien.lazewski.jpg"
   },
   {
     "id": 174,
     "username": "live.comjerome.morino.pro",
-    "name": "Jérome MORINO",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/174/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/live.comjerome.morino.pro"
+    "name": "Jérome Morino",
+    "avatar_url": "avatars/live.comjerome.morino.pro.jpg"
   },
   {
     "id": 609,
     "username": "alaunay",
-    "name": "LAUNAY Annick",
-    "avatar_url": "avatars/alaunay.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/alaunay"
+    "name": "Annick Launay",
+    "avatar_url": "avatars/alaunay.jpg"
   },
   {
     "id": 480,
     "username": "ltoson.ext",
     "name": "Laurent Toson",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/480/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ltoson.ext"
+    "avatar_url": "avatars/ltoson.ext.jpg"
   },
   {
     "id": 349,
     "username": "glehnert",
-    "name": "LEHNERT Guillaume",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/349/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/glehnert"
+    "name": "Guillaume Lehnert",
+    "avatar_url": "avatars/glehnert.png"
   },
   {
     "id": 494,
     "username": "mleyrat.ext",
-    "name": "LEYRAT Marc",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/494/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mleyrat.ext"
+    "name": "Marc Leyrat",
+    "avatar_url": "avatars/mleyrat.ext.jpg"
   },
   {
     "id": 477,
     "username": "mllegou",
-    "name": "LLEGOU Mathieu",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/477/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mllegou"
+    "name": "Mathieu Llegou",
+    "avatar_url": "avatars/mllegou.jpg"
   },
   {
     "id": 134,
     "username": "gmachenaud",
-    "name": "MACHENAUD Gary",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/134/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/gmachenaud"
+    "name": "Gary Machenaud",
+    "avatar_url": "avatars/gmachenaud.jpg"
   },
   {
     "id": 661,
     "username": "amafhoudi.ext",
-    "name": "MAFHOUDI Ali",
-    "avatar_url": "avatars/amafhoudi.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/amafhoudi.ext"
+    "name": "Ali Mafhoudi",
+    "avatar_url": "avatars/amafhoudi.ext.svg"
   },
   {
     "id": 363,
     "username": "razafindrajao.m",
-    "name": "Mahery RAZAFINDRAJAO",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/363/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/razafindrajao.m"
+    "name": "Mahery Razafindrajao",
+    "avatar_url": "avatars/razafindrajao.m.png"
   },
   {
     "id": 495,
     "username": "nmallottouzet.ext",
-    "name": "MALLOT-TOUZET Nicolas",
-    "avatar_url": "avatars/nmallottouzet.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/nmallottouzet.ext"
-  },
-  {
-    "id": 170,
-    "username": "marge-bot",
-    "name": "Marge Bot",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/170/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/marge-bot"
+    "name": "Nicolas Mallot-Touzet",
+    "avatar_url": "avatars/nmallottouzet.ext.jpg"
   },
   {
     "id": 420,
     "username": "dmarquezgruat.ext",
-    "name": "MARQUEZ GRUAT Daniela",
-    "avatar_url": "avatars/dmarquezgruat.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/dmarquezgruat.ext"
+    "name": "Daniela Marquez Gruat",
+    "avatar_url": "avatars/dmarquezgruat.ext.jpg"
   },
   {
     "id": 643,
     "username": "jmerhibleik",
-    "name": "MERHI BLEIK Joséphine",
-    "avatar_url": "avatars/jmerhibleik.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/jmerhibleik"
+    "name": "Joséphine Merhi Bleik",
+    "avatar_url": "avatars/jmerhibleik.svg"
   },
   {
     "id": 295,
     "username": "mmarotsaha",
     "name": "Mirza Andriamanamisoa Marotsaha",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/295/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mmarotsaha"
+    "avatar_url": "avatars/mmarotsaha.jpg"
   },
   {
     "id": 633,
     "username": "MMolinier.ext",
-    "name": "MOLINIER Marie",
-    "avatar_url": "avatars/MMolinier.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/MMolinier.ext"
+    "name": "Marie Molinier",
+    "avatar_url": "avatars/MMolinier.ext.jpg"
   },
   {
     "id": 209,
     "username": "emonot",
-    "name": "MONOT Elise",
-    "avatar_url": "avatars/emonot.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/emonot"
-  },
-  {
-    "id": 654,
-    "username": "n8n-gitlab",
-    "name": "n8n-gitlab",
-    "avatar_url": "avatars/n8n-gitlab.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/n8n-gitlab"
+    "name": "Elise Monot",
+    "avatar_url": "avatars/emonot.png"
   },
   {
     "id": 649,
     "username": "nnahdi.ext",
-    "name": "NAHDI Noura",
-    "avatar_url": "avatars/nnahdi.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/nnahdi.ext"
+    "name": "Noura Nahdi",
+    "avatar_url": "avatars/nnahdi.ext.jpg"
   },
   {
     "id": 389,
     "username": "ndobler1",
-    "name": "Nicolas DOBLER",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/389/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ndobler1"
+    "name": "Nicolas Dobler",
+    "avatar_url": "avatars/ndobler1.jpg"
   },
   {
     "id": 358,
     "username": "live.comnouriiche",
-    "name": "Nouri ICHE",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/358/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/live.comnouriiche"
+    "name": "Nouri Iche",
+    "avatar_url": "avatars/live.comnouriiche.jpg"
   },
   {
     "id": 578,
     "username": "rpapa",
-    "name": "PAPA Romain",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/578/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/rpapa"
+    "name": "Romain Papa",
+    "avatar_url": "avatars/rpapa.jpg"
   },
   {
     "id": 182,
     "username": "tpatte",
-    "name": "PATTE Tanguy",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/182/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/tpatte"
+    "name": "Tanguy Patte",
+    "avatar_url": "avatars/tpatte.png"
   },
   {
     "id": 90,
     "username": "mpes",
-    "name": "PES Many",
-    "avatar_url": "avatars/mpes.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mpes"
+    "name": "Many Pes",
+    "avatar_url": "avatars/mpes.jpg"
   },
   {
     "id": 628,
     "username": "jspilard.ext",
-    "name": "PILARD Jean-Sebastien",
-    "avatar_url": "avatars/jspilard.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/jspilard.ext"
-  },
-  {
-    "id": 622,
-    "username": "project_192_bot_67630279ed9dcd5da5fe36c997b5ca55",
-    "name": "pycharm pluggin",
-    "avatar_url": "avatars/project_192_bot_67630279ed9dcd5da5fe36c997b5ca55.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/project_192_bot_67630279ed9dcd5da5fe36c997b5ca55"
+    "name": "Jean-Sebastien Pilard",
+    "avatar_url": "avatars/jspilard.ext.jpg"
   },
   {
     "id": 285,
     "username": "rraballand",
-    "name": "RABALLAND Romain",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/285/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/rraballand"
+    "name": "Romain Raballand",
+    "avatar_url": "avatars/rraballand.jpg"
   },
   {
     "id": 652,
     "username": "qrichard",
-    "name": "RICHARD Quentin",
-    "avatar_url": "avatars/qrichard.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/qrichard"
+    "name": "Quentin Richard",
+    "avatar_url": "avatars/qrichard.png"
   },
   {
     "id": 569,
     "username": "rnguon.ext",
     "name": "Rithy Sak Nguon",
-    "avatar_url": "avatars/rnguon.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/rnguon.ext"
+    "avatar_url": "avatars/rnguon.ext.jpg"
   },
   {
     "id": 590,
     "username": "rdellinger",
     "name": "Romain Dellinger",
-    "avatar_url": "avatars/rdellinger.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/rdellinger"
+    "avatar_url": "avatars/rdellinger.jpg"
   },
   {
     "id": 361,
     "username": "mrousset",
-    "name": "ROUSSET Martial",
-    "avatar_url": "avatars/mrousset.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mrousset"
+    "name": "Martial Rousset",
+    "avatar_url": "avatars/mrousset.jpg"
   },
   {
     "id": 473,
     "username": "spruneau",
     "name": "Simon Pruneau",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/473/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/spruneau"
+    "avatar_url": "avatars/spruneau.jpg"
   },
   {
     "id": 635,
     "username": "psmague.ext",
-    "name": "SMAGUE Pierre",
-    "avatar_url": "avatars/psmague.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/psmague.ext"
+    "name": "Pierre Smague",
+    "avatar_url": "avatars/psmague.ext.svg"
   },
   {
     "id": 398,
     "username": "msoulard",
-    "name": "SOULARD Maxime",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/398/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/msoulard"
+    "name": "Maxime Soulard",
+    "avatar_url": "avatars/msoulard.jpg"
   },
   {
     "id": 135,
     "username": "ssoumpholphakdy",
-    "name": "SOUMPHOLPHAKDY Sisavang",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/135/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ssoumpholphakdy"
+    "name": "Sisavang Soumpholphakdy",
+    "avatar_url": "avatars/ssoumpholphakdy.jpg"
   },
   {
     "id": 476,
     "username": "ptanghe",
-    "name": "TANGHE Pierre",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/476/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/ptanghe"
-  },
-  {
-    "id": 211,
-    "username": "tech.account.idf",
-    "name": "Tech Account INVIVO DIGITAL FACTORY",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/211/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/tech.account.idf"
+    "name": "Pierre Tanghe",
+    "avatar_url": "avatars/ptanghe.jpg"
   },
   {
     "id": 625,
     "username": "mtei",
-    "name": "TEI Maryam",
-    "avatar_url": "avatars/mtei.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/mtei"
-  },
-  {
-    "id": 277,
-    "username": "live.comtanguy.patte.invivo",
-    "name": "TEST DEV User Tanguy Patte",
-    "avatar_url": "avatars/live.comtanguy.patte.invivo.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/live.comtanguy.patte.invivo"
+    "name": "Maryam Tei",
+    "avatar_url": "avatars/mtei.png"
   },
   {
     "id": 369,
     "username": "bthevenot",
-    "name": "THEVENOT Benoit",
-    "avatar_url": "avatars/bthevenot.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/bthevenot"
+    "name": "Benoit Thevenot",
+    "avatar_url": "avatars/bthevenot.jpg"
   },
   {
     "id": 644,
     "username": "tgrognet.ext",
     "name": "Thibault Hugues-Grognet",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/644/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/tgrognet.ext"
-  },
-  {
-    "id": 617,
-    "username": "project_252_bot_7f29cd53c70b1aea84980a133d620418",
-    "name": "token",
-    "avatar_url": "avatars/project_252_bot_7f29cd53c70b1aea84980a133d620418.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/project_252_bot_7f29cd53c70b1aea84980a133d620418"
+    "avatar_url": "avatars/tgrognet.ext.jpg"
   },
   {
     "id": 264,
     "username": "valentin.menard",
     "name": "Valentin Ménard",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/264/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/valentin.menard"
+    "avatar_url": "avatars/valentin.menard.jpg"
   },
   {
     "id": 662,
     "username": "nvervaet.ext",
-    "name": "VERVAET Nils",
-    "avatar_url": "avatars/nvervaet.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/nvervaet.ext"
+    "name": "Nils Vervaet",
+    "avatar_url": "avatars/nvervaet.ext.png"
   },
   {
     "id": 580,
     "username": "vnea",
     "name": "Victor Nea",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/580/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/vnea"
+    "avatar_url": "avatars/vnea.jpg"
   },
   {
     "id": 442,
     "username": "vsarazin",
-    "name": "Vivian SARAZIN",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/442/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/vsarazin"
+    "name": "Vivian Sarazin",
+    "avatar_url": "avatars/vsarazin.jpg"
   },
   {
     "id": 331,
     "username": "xjulien1",
     "name": "Xavier J.",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/331/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/xjulien1"
+    "avatar_url": "avatars/xjulien1.png"
   },
   {
     "id": 186,
     "username": "belguith.z",
-    "name": "Zied BELGUITH",
-    "avatar_url": "https://gitlab.tooling.invivodigitalfactory.com/uploads/-/system/user/avatar/186/avatar.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/belguith.z"
+    "name": "Zied Belguith",
+    "avatar_url": "avatars/belguith.z.png"
   },
   {
     "id": 618,
     "username": "hzobel.ext",
-    "name": "ZOBEL Hugo",
-    "avatar_url": "avatars/hzobel.ext.png",
-    "web_url": "https://gitlab.tooling.invivodigitalfactory.com/hzobel.ext"
+    "name": "Hugo Zobel",
+    "avatar_url": "avatars/hzobel.ext.svg"
   }
 ]
