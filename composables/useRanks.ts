@@ -1,7 +1,6 @@
 import type { LolRank, ValRank } from '~/data/players'
 
 export const LOL_ROLES = ['TOP', 'JUNGLE', 'MID', 'ADC', 'SUPPORT', 'FILL'] as const
-export const VAL_ROLES = ['DUELIST', 'INITIATOR', 'CONTROLLER', 'SENTINEL', 'FLEX'] as const
 
 export const LOL_RANKS: LolRank[] = [
   'UNRANKED', 'IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM',
@@ -11,23 +10,6 @@ export const VAL_RANKS: ValRank[] = [
   'UNRANKED', 'IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM',
   'DIAMOND', 'ASCENDANT', 'IMMORTAL', 'RADIANT',
 ]
-
-const LOL_SCORE: Record<LolRank, number> = {
-  UNRANKED: 0, IRON: 10, BRONZE: 20, SILVER: 30, GOLD: 40,
-  PLATINUM: 55, EMERALD: 65, DIAMOND: 80, MASTER: 100,
-  GRANDMASTER: 120, CHALLENGER: 150,
-}
-const VAL_SCORE: Record<ValRank, number> = {
-  UNRANKED: 0, IRON: 10, BRONZE: 20, SILVER: 30, GOLD: 40,
-  PLATINUM: 55, DIAMOND: 75, ASCENDANT: 95, IMMORTAL: 120, RADIANT: 150,
-}
-
-export function scoreLol(rank?: LolRank) {
-  return rank ? LOL_SCORE[rank] ?? 0 : 0
-}
-export function scoreVal(rank?: ValRank) {
-  return rank ? VAL_SCORE[rank] ?? 0 : 0
-}
 
 const LOL_ICON_KEY: Record<LolRank, string | null> = {
   UNRANKED: null,

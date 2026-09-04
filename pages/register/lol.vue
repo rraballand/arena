@@ -5,6 +5,7 @@ import {
   useMembersStore,
   fetchMembers,
   registerPlayer,
+  avatarSrc,
   type FactoryMember,
 } from '~/composables/useStores'
 
@@ -85,7 +86,7 @@ async function submit() {
         <h2 class="text-[10px] md:text-xs uppercase tracking-widest text-lol-gold-2 mb-3 md:mb-4">Identité Factory</h2>
 
         <div v-if="selectedMember" class="hex-frame p-4 flex items-center gap-4">
-          <img v-if="selectedMember.avatar_url" :src="selectedMember.avatar_url" :alt="selectedMember.name" class="w-14 h-14 md:w-16 md:h-16 border border-lol-gold-3 shrink-0" />
+          <img v-if="selectedMember.avatar_url" :src="avatarSrc(selectedMember.avatar_url)" :alt="selectedMember.name" class="w-14 h-14 md:w-16 md:h-16 border border-lol-gold-3 shrink-0" />
           <div class="flex-1 min-w-0">
             <div class="font-display text-lg md:text-2xl text-lol-gold-1 truncate">{{ selectedMember.name }}</div>
           </div>
@@ -95,7 +96,7 @@ async function submit() {
           <input
             v-model="search"
             type="text"
-            placeholder="Tape ton nom ou username GitLab..."
+            placeholder="Tape ton nom..."
             class="w-full bg-lol-void border border-lol-gold-6 rounded-lg focus:border-lol-gold-3 outline-none px-3 md:px-4 py-3 text-lol-gold-1"
           />
           <div v-if="search.trim().length >= 2" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 md:max-h-96 overflow-y-auto">
@@ -106,7 +107,7 @@ async function submit() {
               class="flex items-center gap-3 p-2 border border-lol-gold-6 rounded-lg hover:border-lol-gold-3 hover:bg-lol-gold-6/20 transition text-left"
               @click="pick(m)"
             >
-              <img v-if="m.avatar_url" :src="m.avatar_url" :alt="m.name" class="w-10 h-10 border border-lol-gold-6 rounded-lg shrink-0" />
+              <img v-if="m.avatar_url" :src="avatarSrc(m.avatar_url)" :alt="m.name" class="w-10 h-10 border border-lol-gold-6 rounded-lg shrink-0" />
               <div class="min-w-0 flex-1">
                 <div class="font-display font-semibold text-lol-gold-1 truncate text-sm md:text-base">{{ m.name }}</div>
               </div>
