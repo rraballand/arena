@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Factory Arena">
+  <rect width="64" height="64" fill="#091428"/>
+  <!-- The hex frame the whole site is built on, rotated 45° like the nav mark. -->
+  <rect x="18" y="18" width="28" height="28" transform="rotate(45 32 32)" fill="none" stroke="#C89B3C" stroke-width="3"/>
+  <rect x="27" y="27" width="10" height="10" fill="#C89B3C"/>
+</svg>
