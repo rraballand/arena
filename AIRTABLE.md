@@ -63,7 +63,20 @@ pnpm airtable:seed         # ... et importe .data/*.json (refuse si la table n'e
 ```
 
 `airtable:setup` est idempotent : relancé sur une base existante, il n'ajoute
-que les colonnes manquantes.
+que les colonnes manquantes. Les scripts lisent `.env` eux-mêmes, via
+`--env-file-if-exists` — inutile d'exporter quoi que ce soit à la main.
+
+Le schéma des tables est déclaré dans `scripts/airtable-setup.mjs`, mais le
+mapping vient de `composables/airtableMappers.ts`, que le script **importe** au
+lieu d'en garder une copie. Au démarrage il compare les deux : si l'app écrit un
+champ sans colonne déclarée, ou l'inverse, il s'arrête en nommant le coupable.
+
+## Supprimer une colonne
+
+L'API Airtable sait créer et renommer un champ, pas en supprimer — la route
+`DELETE` renvoie `404`. Ça se fait à la main dans la grille : en-tête de colonne
+→ *Delete field*. Pense à retirer le champ du schéma et du mapper d'abord, sinon
+le garde-fou ci-dessus refusera de tourner.
 
 ## Déploiement
 
@@ -82,10 +95,13 @@ imbriqués sont donc éclatés en colonnes scalaires, pas sérialisés en JSON.
 
 `appId` est la clé métier (l'`id` numérique de l'app) et le champ primaire.
 
-**Players** — `appId`, `pseudo`, `tagline`, `region`, `avatarSeed`,
-`registeredAt`, `factoryUsername`, `factoryName`, `factoryAvatar`, `archived`,
-`lolPlaying`, `lolRole`, `lolRank`, `lolMain`, `valPlaying`, `valRole`,
-`valRank`, `valMain`
+**Players** — `appId`, `pseudo`, `avatarSeed`, `registeredAt`,
+`factoryUsername`, `factoryName`, `factoryAvatar`, `shadow`, `lolPlaying`,
+`lolRole`, `lolRank`, `lolMain`, `valPlaying`, `valRank`, `valMain`
+
+`shadow` = indisponible ce soir. Distinct d'une sortie de tournoi, qui se lit
+sur `lolPlaying` / `valPlaying` et n'a pas besoin d'un champ à elle. Pas de rôle
+Valorant : il suit l'agent choisi, donc il ne dit rien d'utile.
 
 **Matches** — `appId`, `game`, `createdAt`, `batchId`, `outcome`, `benched`,
 `teamAName`, `teamAPlayerIds`, `teamASlots`, `teamBName`, `teamBPlayerIds`,
