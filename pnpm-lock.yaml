@@ -30,6 +30,9 @@ importers:
       '@types/node':
         specifier: ^26.4.1
         version: 26.4.1
+      tailwindcss:
+        specifier: ^3.4.19
+        version: 3.4.19(yaml@2.9.0)
       typescript:
         specifier: ^5.5.0
         version: 5.9.3
