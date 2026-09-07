@@ -12,7 +12,6 @@ import {
   reshuffleMatch as storeReshuffleMatch,
   avatarSrc,
 } from '~/composables/useStores'
-import { useCurrentGame } from '~/composables/useCurrentGame'
 
 const route = useRoute()
 const game = computed(() => route.params.game as 'lol' | 'val')
@@ -20,9 +19,6 @@ const game = computed(() => route.params.game as 'lol' | 'val')
 if (!['lol', 'val'].includes(game.value)) {
   throw createError({ statusCode: 404, statusMessage: 'Jeu inconnu' })
 }
-
-const currentGame = useCurrentGame()
-watchEffect(() => { currentGame.value = game.value })
 
 const playersStore = usePlayersStore()
 const matchesStore = useMatchesStore()

@@ -10,10 +10,6 @@ import {
   avatarSrc,
   type FactoryMember,
 } from '~/composables/useStores'
-import { useCurrentGame } from '~/composables/useCurrentGame'
-
-const currentGame = useCurrentGame()
-currentGame.value = 'lol'
 
 const playersStore = usePlayersStore()
 const matchesStore = useMatchesStore()

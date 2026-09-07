@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useCurrentGame } from '~/composables/useCurrentGame'
 import {
   usePlayersStore,
   useMembersStore,
@@ -8,9 +7,6 @@ import {
   avatarSrc,
   type FactoryMember,
 } from '~/composables/useStores'
-
-const currentGame = useCurrentGame()
-currentGame.value = 'lol'
 
 onMounted(fetchMembers)
 

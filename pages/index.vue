@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { useCurrentGame } from '~/composables/useCurrentGame'
 import { usePlayersStore } from '~/composables/useStores'
-
-const currentGame = useCurrentGame()
-currentGame.value = null
 
 const playersStore = usePlayersStore()
 const lolCount = computed(() => playersStore.value.filter(p => p.lol.playing).length)
