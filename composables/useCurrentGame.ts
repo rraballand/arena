@@ -1,7 +1,27 @@
 export type GameKey = 'lol' | 'val' | null
 
+const GAMES = new Set(['lol', 'val'])
+
+/**
+ * Which game's chrome the current route wears, for the layout background.
+ *
+ * Derived from the path on purpose. This used to be a `useState` that every page
+ * wrote in its own setup while the layout read it — and the layout renders
+ * *before* the page on the server, so SSR picked the background with the value
+ * still `null` while the client restored the final value from the payload. The
+ * two renders then disagreed on which component to mount, and hydration failed.
+ * A pure function of the route cannot drift.
+ */
 export function useCurrentGame() {
-  return useState<GameKey>('currentGame', () => null)
+  const route = useRoute()
+  return computed<GameKey>(() => {
+    const [first, second] = route.path.split('/').filter(Boolean)
+    if (GAMES.has(first)) return first as GameKey
+    if (first === 'register' && GAMES.has(second)) return second as GameKey
+    // Admin belongs to no game; keep the LoL chrome it has always shipped with.
+    if (first === 'admin') return 'lol'
+    return null
+  })
 }
 
 export const GAME_VIDEO = {

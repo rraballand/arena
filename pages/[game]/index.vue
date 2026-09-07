@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useCurrentGame } from '~/composables/useCurrentGame'
 import { usePlayersStore, crossRegisterPlayer, avatarSrc } from '~/composables/useStores'
 
 const route = useRoute()
@@ -8,9 +7,6 @@ const game = computed(() => route.params.game as 'lol' | 'val')
 if (!['lol', 'val'].includes(game.value)) {
   throw createError({ statusCode: 404, statusMessage: 'Jeu inconnu' })
 }
-
-const currentGame = useCurrentGame()
-watchEffect(() => { currentGame.value = game.value })
 
 const playersStore = usePlayersStore()
 const allPlayers = computed(() => playersStore.value)
