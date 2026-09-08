@@ -6,7 +6,7 @@
  * in the grid view. Nested objects (`lol`, `teamA`) are therefore spread into
  * scalar columns rather than dumped as JSON blobs.
  */
-import type { Player, LolRole, LolRank, ValRole, ValRank } from '~/data/players'
+import type { Player, LolRole, LolRank, ValRank } from '~/data/players'
 import type { Match, MatchTeam, Outcome } from './useStores'
 
 type Fields = Record<string, unknown>
@@ -31,7 +31,13 @@ function fieldToIds(v: unknown): number[] {
   if (Array.isArray(v)) return v.map(Number).filter(Number.isFinite)
   return String(v ?? '')
     .split(',')
-    .map(s => Number(s.trim()))
+    .map(s => s.trim())
+    // Blank segments must go before Number() sees them: `Number('')` is 0, so an
+    // empty bench used to read back as `[0]` — a phantom player, and a round trip
+    // that was no longer a fixed point, which made the sync rewrite the row on
+    // every single load.
+    .filter(Boolean)
+    .map(Number)
     .filter(Number.isFinite)
 }
 
@@ -41,8 +47,6 @@ export function playerToFields(p: Player): Fields {
   return {
     appId: p.id,
     pseudo: p.pseudo,
-    tagline: p.tagline ?? '',
-    region: p.region,
     avatarSeed: p.avatarSeed,
     registeredAt: p.registeredAt,
     factoryUsername: p.factoryUsername ?? '',
@@ -54,7 +58,6 @@ export function playerToFields(p: Player): Fields {
     lolRank: p.lol?.rank ?? '',
     lolMain: p.lol?.main ?? '',
     valPlaying: Boolean(p.valorant?.playing),
-    valRole: p.valorant?.role ?? '',
     valRank: p.valorant?.rank ?? '',
     valMain: p.valorant?.main ?? '',
   }
@@ -66,8 +69,6 @@ export function fieldsToPlayer(f: Fields): Player | null {
   return {
     id,
     pseudo: str(f.pseudo) ?? `Joueur ${id}`,
-    tagline: str(f.tagline),
-    region: (str(f.region) ?? 'EUW') as Player['region'],
     avatarSeed: str(f.avatarSeed) ?? String(id),
     registeredAt: str(f.registeredAt) ?? new Date().toISOString().slice(0, 10),
     factoryUsername: str(f.factoryUsername),
@@ -82,7 +83,6 @@ export function fieldsToPlayer(f: Fields): Player | null {
     },
     valorant: {
       playing: Boolean(f.valPlaying),
-      role: str(f.valRole) as ValRole | undefined,
       rank: str(f.valRank) as ValRank | undefined,
       main: str(f.valMain),
     },

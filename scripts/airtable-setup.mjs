@@ -13,6 +13,11 @@
  */
 import { promises as fs } from 'node:fs'
 import { resolve } from 'node:path'
+// The app's own mappers, imported rather than copied. Node strips the types on
+// the fly, and the file has no runtime imports of its own, so it loads as-is.
+// This used to be a second hand-maintained copy with a "keep the two in step"
+// comment on top — which is exactly the kind of promise nobody keeps.
+import { matchToFields, playerToFields } from '../composables/airtableMappers.ts'
 
 const API_ROOT = 'https://api.airtable.com/v0'
 const REPO_ROOT = resolve(new URL('../', import.meta.url).pathname)
@@ -41,8 +46,6 @@ const SCHEMAS = {
   [PLAYERS]: [
     int('appId'),
     text('pseudo'),
-    text('tagline'),
-    text('region'),
     text('avatarSeed'),
     text('registeredAt'),
     text('factoryUsername'),
@@ -54,7 +57,6 @@ const SCHEMAS = {
     text('lolRank'),
     text('lolMain'),
     check('valPlaying'),
-    text('valRole'),
     text('valRank'),
     text('valMain'),
   ],
@@ -75,6 +77,45 @@ const SCHEMAS = {
     int('powerB'),
   ],
 }
+
+/**
+ * The schema above is hand-written because Airtable needs a column *type*, which
+ * no amount of inspecting the mapper output can tell us reliably. So instead of
+ * trusting the two to stay aligned, compare them: every key the app writes must
+ * have a column declared here, or the seed would silently drop it — and every
+ * declared column should be one the app actually writes.
+ */
+function assertSchemaCoversMappers() {
+  const probePlayer = {
+    id: 1, pseudo: 'x', avatarSeed: 'x', registeredAt: '2026-01-01',
+    lol: { playing: true }, valorant: { playing: false },
+  }
+  const probeMatch = {
+    id: 1, game: 'lol', createdAt: '', batchId: '', benched: [],
+    teamA: { name: '', playerIds: [] }, teamB: { name: '', playerIds: [] }, outcome: null,
+  }
+  const pairs = [
+    [PLAYERS, Object.keys(playerToFields(probePlayer))],
+    [MATCHES, Object.keys(matchToFields(probeMatch))],
+  ]
+  const problems = []
+  for (const [table, written] of pairs) {
+    const declared = SCHEMAS[table].map(f => f.name)
+    for (const k of written) {
+      if (!declared.includes(k)) problems.push(`${table}: the app writes "${k}" but no column is declared`)
+    }
+    for (const k of declared) {
+      if (!written.includes(k)) problems.push(`${table}: column "${k}" is declared but the app never writes it`)
+    }
+  }
+  if (problems.length) {
+    console.error('Schema drifted from composables/airtableMappers.ts:')
+    for (const p of problems) console.error(`  - ${p}`)
+    process.exit(1)
+  }
+}
+
+assertSchemaCoversMappers()
 
 async function api(path, init = {}) {
   const res = await fetch(`${API_ROOT}${path}`, {
@@ -128,49 +169,6 @@ if (!seed) {
 }
 
 // ---------------- Seed ----------------
-
-/** Mirrors composables/airtableMappers.ts — keep the two in step. */
-function playerToFields(p) {
-  return {
-    appId: p.id,
-    pseudo: p.pseudo,
-    tagline: p.tagline ?? '',
-    region: p.region ?? 'EUW',
-    avatarSeed: p.avatarSeed ?? String(p.id),
-    registeredAt: p.registeredAt ?? new Date().toISOString().slice(0, 10),
-    factoryUsername: p.factoryUsername ?? '',
-    factoryName: p.factoryName ?? '',
-    factoryAvatar: p.factoryAvatar ?? '',
-    shadow: Boolean(p.shadow),
-    lolPlaying: Boolean(p.lol?.playing),
-    lolRole: p.lol?.role ?? '',
-    lolRank: p.lol?.rank ?? '',
-    lolMain: p.lol?.main ?? '',
-    valPlaying: Boolean(p.valorant?.playing),
-    valRole: p.valorant?.role ?? '',
-    valRank: p.valorant?.rank ?? '',
-    valMain: p.valorant?.main ?? '',
-  }
-}
-
-function matchToFields(m) {
-  return {
-    appId: m.id,
-    game: m.game,
-    createdAt: m.createdAt,
-    batchId: m.batchId ?? `${m.game}-${m.id}`,
-    outcome: m.outcome ?? '',
-    benched: (m.benched ?? []).join(','),
-    teamAName: m.teamA?.name ?? 'Équipe A',
-    teamAPlayerIds: (m.teamA?.playerIds ?? []).join(','),
-    teamASlots: m.teamA?.slots ?? null,
-    teamBName: m.teamB?.name ?? 'Équipe B',
-    teamBPlayerIds: (m.teamB?.playerIds ?? []).join(','),
-    teamBSlots: m.teamB?.slots ?? null,
-    powerA: m.powerA ?? null,
-    powerB: m.powerB ?? null,
-  }
-}
 
 async function readJson(rel) {
   try {

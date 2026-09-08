@@ -20,6 +20,9 @@ export default defineNuxtConfig({
     head: {
       title: 'Factory Arena',
       link: [
+        // Goes through the baseURL: on Pages the site lives under /arena/, and
+        // the browser would otherwise ask the domain root and get a 404.
+        { rel: 'icon', type: 'image/svg+xml', href: `${process.env.NUXT_APP_BASE_URL || '/'}favicon.svg` },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {

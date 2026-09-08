@@ -2,6 +2,7 @@ import type { Player } from '~/data/players'
 import { fieldsToMatch, fieldsToPlayer, matchToFields, playerToFields } from './airtableMappers'
 import { useAirtableConfig } from './useAirtable'
 import { useRemoteStore } from './useRemoteStore'
+import { rankSeed } from './useRanks'
 
 export type Outcome = 'A' | 'B' | 'D'
 
@@ -141,8 +142,6 @@ export function registerPlayer(input: RegisterInput): Player {
   const player: Player = {
     id: nextPlayerId(),
     pseudo: input.pseudo,
-    tagline: 'EUW',
-    region: 'EUW',
     avatarSeed: input.factoryUsername,
     factoryUsername: input.factoryUsername,
     factoryName: input.factoryName,
@@ -281,6 +280,33 @@ export interface ScoreCard {
   matches: number
 }
 
+/**
+ * The weight teams are balanced on.
+ *
+ * Normally the points earned in matches. But on the very first draw of a
+ * tournament everybody sits at zero, so "balanced" was a coin toss — while the
+ * declared ranks were right there, collected from /admin and used by nothing.
+ *
+ * The seed applies only while *no one* in the pool has played. Blending the two
+ * scales would be worse than random: points move by 3 per win, rank seeds run
+ * from 10 to 150, so a never-played CHALLENGER would outweigh someone with three
+ * wins by a factor of sixteen. Either everyone is seeded, or nobody is.
+ */
+export function teamWeigher(
+  ids: number[],
+  scores: Map<number, ScoreCard>,
+  game: 'lol' | 'val',
+): (id: number) => number {
+  const played = ids.some(id => (scores.get(id)?.matches ?? 0) > 0)
+  if (played) return id => scores.get(id)?.points ?? 0
+
+  const byId = new Map(usePlayersStore().value.map(p => [p.id, p]))
+  return (id) => {
+    const p = byId.get(id)
+    return rankSeed(game === 'lol' ? p?.lol.rank : p?.valorant.rank, game)
+  }
+}
+
 export function computeScores(matches: Match[], game: 'lol' | 'val') {
   const table = new Map<number, ScoreCard>()
   function ensure(pid: number) {
@@ -390,7 +416,8 @@ function balancedSplit(
 
 function makeParallelMatches(
   pool: Player[],
-  scores: Map<number, ScoreCard>,
+  /** Built by the caller, which knows the game — see `teamWeigher`. */
+  scoreOf: (id: number) => number,
   teamSize: number,
   existingKeys: Set<string>,
 ) {
@@ -398,7 +425,6 @@ function makeParallelMatches(
   const active = pool.map(p => p.id)
   const perMatch = teamSize * 2
   const matchCount = Math.floor(active.length / perMatch)
-  const scoreOf = (id: number) => scores.get(id)?.points ?? 0
   if (matchCount === 0) {
     // Not enough for a full match. Create one partial match if we have >= 2 players.
     if (active.length < 2) return { matches: [] as Array<{ teamA: number[]; teamB: number[] }>, benched: active }
@@ -488,15 +514,15 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
     throw new Error(`Roster insuffisant (${pool.length}/2)`)
   }
   const scores = computeScores(matches, game)
+  const scoreOf = teamWeigher(pool.map(p => p.id), scores, game)
   const existing = new Set(matches.filter(m => m.game === game).map(m => pairKey(m.teamA.playerIds, m.teamB.playerIds)))
-  const plan = makeParallelMatches(pool, scores, teamSize, existing)
+  const plan = makeParallelMatches(pool, scoreOf, teamSize, existing)
   if (!plan.matches.length) throw new Error('Aucune combinaison inédite trouvée')
 
   const usedNames = new Set(matches.filter(m => m.game === game).flatMap(m => [m.teamA.name, m.teamB.name]))
   const now = new Date().toISOString()
   const batchId = `${game}-${Date.now()}`
   let nextId = matches.length ? Math.max(...matches.map(m => m.id)) + 1 : 1
-  const scoreOf = (id: number) => scores.get(id)?.points ?? 0
   const sumPower = (ids: number[]) => ids.reduce((s, id) => s + scoreOf(id), 0)
   const created: Match[] = plan.matches.map(({ teamA, teamB }) => {
     const a = randomTeamName(game, usedNames); usedNames.add(a.name)
@@ -537,7 +563,7 @@ export function reshuffleMatch(id: number) {
 
   const otherMatches = store.value.filter(x => x.game === m.game && x.id !== id)
   const scores = computeScores(otherMatches, m.game)
-  const scoreOf = (pid: number) => scores.get(pid)?.points ?? 0
+  const scoreOf = teamWeigher(pool, scores, m.game)
   const sumPower = (ids: number[]) => ids.reduce((s, pid) => s + scoreOf(pid), 0)
 
   const sizeA = m.teamA.slots ?? Math.ceil(pool.length / 2)
@@ -598,7 +624,7 @@ export function challengeBenchWithRandom(batchId: string, size?: number) {
   const teamSize = size ?? defaultSize
 
   const preScores = computeScores(store.value, game)
-  const scoreOf = (id: number) => preScores.get(id)?.points ?? 0
+  const scoreOf = teamWeigher(bench, preScores, game)
   const { teamA: benchTeam, teamB: opponentTeam } = balancedSplit(
     bench.slice(0, benchTeamCount * 2),
     scoreOf,

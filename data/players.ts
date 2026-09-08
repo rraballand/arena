@@ -1,5 +1,4 @@
 export type LolRole = 'TOP' | 'JUNGLE' | 'MID' | 'ADC' | 'SUPPORT' | 'FILL'
-export type ValRole = 'DUELIST' | 'INITIATOR' | 'CONTROLLER' | 'SENTINEL' | 'FLEX'
 export type LolRank =
   | 'IRON' | 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM' | 'EMERALD'
   | 'DIAMOND' | 'MASTER' | 'GRANDMASTER' | 'CHALLENGER' | 'UNRANKED'
@@ -9,7 +8,6 @@ export type ValRank =
 
 export interface PlayerGame {
   playing: boolean
-  role?: LolRole | ValRole
   rank?: LolRank | ValRank
   main?: string
 }
@@ -17,8 +15,6 @@ export interface PlayerGame {
 export interface Player {
   id: number
   pseudo: string
-  tagline?: string
-  region: 'EUW' | 'EUNE' | 'NA' | 'KR'
   avatarSeed: string
   registeredAt: string
   factoryUsername?: string
@@ -30,8 +26,9 @@ export interface Player {
    * which already excludes them — no separate "archived" flag needed.
    */
   shadow?: boolean
+  /** Only LoL carries a role: Valorant roles follow the agent, so they say nothing. */
   lol: PlayerGame & { role?: LolRole; rank?: LolRank }
-  valorant: PlayerGame & { role?: ValRole; rank?: ValRank }
+  valorant: PlayerGame & { rank?: ValRank }
 }
 
 export const rankColors: Record<string, string> = {

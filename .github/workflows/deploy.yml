@@ -24,7 +24,9 @@ jobs:
           version: 10
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Kept in step with the test workflow; the scripts need 22+ for the
+          # native type stripping that lets them import the app's mappers.
+          node-version: 22
           cache: pnpm
       - name: Install
         run: pnpm install --frozen-lockfile
