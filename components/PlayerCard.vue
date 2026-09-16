@@ -90,7 +90,7 @@ function toggleShadow() {
           {{ player.pseudo }}
         </h3>
         <div v-if="isShadow" class="text-[9px] uppercase tracking-widest text-lol-blue-2">
-          ☾ Shadow · indispo ce soir
+          Indispo ce soir
         </div>
       </div>
     </div>

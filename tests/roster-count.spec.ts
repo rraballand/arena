@@ -29,6 +29,15 @@ for (const path of ['/lol', '/lol/bracket', '/lol/leaderboard']) {
   })
 }
 
+test('an absent player is badged on their card', async ({ page }) => {
+  await goto(page, '/lol')
+  const card = page.locator('.hex-frame').filter({ hasText: 'Carol Charlie' })
+  await expect(card.getByText('Indispo ce soir')).toBeVisible()
+
+  const present = page.locator('.hex-frame').filter({ hasText: 'Alice Alpha' })
+  await expect(present.getByText('Indispo ce soir')).toHaveCount(0)
+})
+
 test('the other game keeps its own roster', async ({ page }) => {
   await goto(page, '/val')
   await expect(counter(page)).toHaveText('1/1')
