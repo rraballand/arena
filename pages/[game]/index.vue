@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePlayersStore, crossRegisterPlayer, avatarSrc } from '~/composables/useStores'
+import { usePlayersStore, crossRegisterPlayer, avatarSrc, isRegistered, isAvailable } from '~/composables/useStores'
 
 const route = useRoute()
 const game = computed(() => route.params.game as 'lol' | 'val')
@@ -12,17 +12,17 @@ const playersStore = usePlayersStore()
 const allPlayers = computed(() => playersStore.value)
 const players = computed(() =>
   allPlayers.value
-    .filter(p => (game.value === 'lol' ? p.lol.playing : p.valorant.playing))
+    .filter(p => isRegistered(p, game.value))
     .sort((a, b) => a.pseudo.localeCompare(b.pseudo, 'fr', { sensitivity: 'base' })),
 )
 const otherGamePlayers = computed(() =>
   allPlayers.value.filter(p => {
-    const inCurrent = game.value === 'lol' ? p.lol.playing : p.valorant.playing
-    const inOther = game.value === 'lol' ? p.valorant.playing : p.lol.playing
-    return inOther && !inCurrent
+    const other = game.value === 'lol' ? 'val' : 'lol'
+    return isRegistered(p, other) && !isRegistered(p, game.value)
   }),
 )
-const count = computed(() => players.value.length)
+/** The header reads "present / signed up", so shadows drop out of the numerator. */
+const presentCount = computed(() => players.value.filter(p => isAvailable(p, game.value)).length)
 
 function crossRegister(playerId: number) {
   crossRegisterPlayer(playerId, game.value)
@@ -42,7 +42,7 @@ const titles = {
         :game="game"
         :title="titles[game].title"
         :subtitle="titles[game].subtitle"
-        :count="count"
+        :count="presentCount"
         :total="players.length"
       />
     </div>

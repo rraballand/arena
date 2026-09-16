@@ -5,6 +5,8 @@ import {
   computeScores,
   SCORING,
   avatarSrc,
+  isRegistered,
+  isAvailable,
 } from '~/composables/useStores'
 
 const route = useRoute()
@@ -33,7 +35,7 @@ const entries = computed<LeaderboardEntry[]>(() => {
   const rows: LeaderboardEntry[] = []
   for (const p of playersStore.value) {
     const c = scores.get(p.id)
-    const active = game.value === 'lol' ? p.lol.playing : p.valorant.playing
+    const active = isRegistered(p, game.value)
     if (!c && !active) continue
     rows.push({
       playerId: p.id,
@@ -55,6 +57,13 @@ const entries = computed<LeaderboardEntry[]>(() => {
 })
 const scoring = computed(() => SCORING)
 
+/**
+ * The header counts the roster, not the table: `entries` also carries players
+ * who left the game but keep their points, so they must not inflate the total.
+ */
+const rosterSize = computed(() => playersStore.value.filter(p => isRegistered(p, game.value)).length)
+const presentCount = computed(() => playersStore.value.filter(p => isAvailable(p, game.value)).length)
+
 const titles = {
   lol: { title: 'League of Legends', subtitle: '' },
   val: { title: 'Valorant', subtitle: '' },
@@ -75,8 +84,8 @@ function medal(index: number) {
         :game="game"
         :title="titles[game].title"
         :subtitle="titles[game].subtitle"
-        :count="entries.length"
-        :total="entries.length"
+        :count="presentCount"
+        :total="rosterSize"
       />
     </div>
 

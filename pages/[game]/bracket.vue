@@ -11,6 +11,8 @@ import {
   computeScores,
   reshuffleMatch as storeReshuffleMatch,
   avatarSrc,
+  isRegistered,
+  isAvailable,
 } from '~/composables/useStores'
 
 const route = useRoute()
@@ -24,9 +26,9 @@ const playersStore = usePlayersStore()
 const matchesStore = useMatchesStore()
 
 const players = computed(() => playersStore.value)
-const activePlayers = computed(() =>
-  players.value.filter(p => (game.value === 'lol' ? p.lol.playing : p.valorant.playing)),
-)
+const activePlayers = computed(() => players.value.filter(p => isRegistered(p, game.value)))
+/** Same "present / signed up" reading as the roster header. */
+const presentCount = computed(() => activePlayers.value.filter(p => isAvailable(p, game.value)).length)
 const matches = computed(() =>
   [...matchesStore.value]
     .filter(m => m.game === game.value)
@@ -145,8 +147,8 @@ const titles = {
         :game="game"
         :title="titles[game].title"
         :subtitle="titles[game].subtitle"
-        :count="activePlayers.length"
-        :total="players.length"
+        :count="presentCount"
+        :total="activePlayers.length"
       />
     </div>
 

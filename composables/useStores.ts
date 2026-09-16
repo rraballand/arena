@@ -101,6 +101,18 @@ export async function fetchMembers() {
   return state.value
 }
 
+// ---------------- Roster predicates ----------------
+
+/** Signed up for this game's tournament, present or not. */
+export function isRegistered(p: Player, game: 'lol' | 'val') {
+  return game === 'lol' ? p.lol.playing : p.valorant.playing
+}
+
+/** Signed up *and* here tonight: `shadow` keeps the slot but sits out the draw. */
+export function isAvailable(p: Player, game: 'lol' | 'val') {
+  return !p.shadow && isRegistered(p, game)
+}
+
 // ---------------- Player ops ----------------
 
 export function nextPlayerId() {
@@ -506,10 +518,7 @@ export function createBatch(game: 'lol' | 'val', teamSize: number) {
   const matchesStore = useMatchesStore()
   const matches = matchesStore.value
 
-  // `playing` covers who is in the tournament, `shadow` who showed up tonight.
-  const pool = players.filter(p =>
-    !p.shadow && (game === 'lol' ? p.lol.playing : p.valorant.playing),
-  )
+  const pool = players.filter(p => isAvailable(p, game))
   if (pool.length < 2) {
     throw new Error(`Roster insuffisant (${pool.length}/2)`)
   }
